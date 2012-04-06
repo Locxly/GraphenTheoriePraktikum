@@ -1,15 +1,25 @@
 package gka;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.WeightedMultigraph;
 
 
 /**
@@ -25,20 +35,29 @@ import org.jgrapht.graph.SimpleGraph;
  */
 public class ExampleJGraphT {
 
-	//~ Constructors ----------------------------------------------------------
+	// Constants
+	// Type of undirected graph
+	private static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
 
+	// Type of directed graph
+	private static String GRAPH_TYPE_DIRECTED = "#gerichtet";
+
+	// Delimiter to split the edge source data
+	private static final String EDGE_SOURCE_DELIMITER = ",";
+	
+	//~ Constructors ----------------------------------------------------------
     private ExampleJGraphT()
     {
     } // ensure non-instantiability.
 
     //~ Methods ---------------------------------------------------------------
-
     /**
      * The starting point for the demo.
      *
      * @param args ignored.
+     * @throws IOException Error during process the input file.
      */
-    public static void main(String [] args)
+    public static void main(String [] args) throws IOException
     {
 //        UndirectedGraph<String, DefaultEdge> stringGraph = createStringGraph();
 //
@@ -50,19 +69,134 @@ public class ExampleJGraphT {
 //
 //        // note directed edges are printed as: (<v1>,<v2>)
 //        System.out.println(hrefGraph.toString());
+    	
+    	BufferedReader input = new BufferedReader(new FileReader("/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph"));
+    	
+        // First we try to get the type of the graph.
+        String graphType = input.readLine();
+        if (!graphType.equals(GRAPH_TYPE_DIRECTED) && !graphType.equals(GRAPH_TYPE_UNDIRECTED) ) {
+        	// Type of graph is not supported.
+        	throw new RuntimeException("Error in dataset line [1]. Graph type [" + graphType + "] is not supported.");
+        }
         
-        // Tree graph
-        DirectedGraph<String, DefaultEdge> treeGraph = createTreeGraph();
+        // Next we get the data from the file.
+        int count = 1; 
+        List<BaseSourceEdge> baseSourceList = new ArrayList<BaseSourceEdge>();
+        String line = "";
+        while ((line = input.readLine()) != null) {
+        	count++;
+        	String[] edgeSource = line.split(EDGE_SOURCE_DELIMITER);
+        	BaseSourceEdge source = new BaseSourceEdge();
+        	if (edgeSource.length == 3) {
+				source.setVertexFrom(edgeSource[0]);
+				source.setVertexTo(edgeSource[1]);
+				source.setEdgeWeight(Long.parseLong(edgeSource[2]));
+			} else if (edgeSource.length == 2) {
+				source.setVertexFrom(edgeSource[0]);
+				source.setVertexTo(edgeSource[1]);
+				source.setEdgeWeight(0L);
+        	} else {
+        		// If array length is either 3 nor 2 the dataset is invalid.
+        		throw new RuntimeException("Error in dataset line [" + count + "]. Count of attribute is [" + edgeSource.length + "].");
+        	}
+        	baseSourceList.add(source);
+        }
+        input.close();
         
-        System.out.println(treeGraph.toString());
+        Graph<String,DefaultWeightedEdge> createdGraph = null;
+        if (GRAPH_TYPE_DIRECTED.equals(graphType)) {
+        	// We need a directed graph so let's create one.
+        	createdGraph = createDirectedGraph(baseSourceList);
+        } else if (GRAPH_TYPE_UNDIRECTED.endsWith(graphType)) {
+        	// We need an undirected graph so let's create one.
+        	createdGraph = createUndirectedGraph(baseSourceList);
+        }
         
-        List<String> predNode3 = Graphs.neighborListOf(treeGraph, "Node_3");
+        if (createdGraph != null) {
+        	System.out.println("Graph : " + createdGraph.toString());
+        } else {
+        	// Could not create graph.
+        	throw new RuntimeException("Error. Could not create valid error.");
+        }
         
-        System.out.println(predNode3.toString());
+//        // Tree graph
+//        DirectedGraph<String, DefaultEdge> treeGraph = createTreeGraph();
+//        
+//        System.out.println(treeGraph.toString());
+//        
+//        List<String> predNode3 = Graphs.neighborListOf(treeGraph, "Node_3");
+//        
+//        System.out.println(predNode3.toString());
     }
 
     
-    private static DirectedGraph<String, DefaultEdge> createTreeGraph() {
+	/**
+	 * Creates an undirected graph from base source list.
+	 * 
+	 * @param baseSourceList
+	 *            the base source list with graph data.
+	 * @return an undirected graph.
+	 */
+	private static UndirectedGraph<String,DefaultWeightedEdge> createUndirectedGraph(List<BaseSourceEdge> baseSourceList) {
+		
+		// Create an undirected graph.
+		UndirectedGraph<String, DefaultWeightedEdge> graph = new WeightedMultigraph<String, DefaultWeightedEdge>(
+				DefaultWeightedEdge.class);
+
+		// Now we add the edge to the graph.
+		for (BaseSourceEdge item : baseSourceList) {
+			// If possible we try add the from vertex.
+			if (!graph.containsVertex(item.getVertexFrom())) {
+				graph.addVertex(item.getVertexFrom());
+			}
+			// If possible we try add the to vertex.
+			if (!graph.containsVertex(item.getVertexTo())) {
+				graph.addVertex(item.getVertexTo());
+			}
+			// Let's check if the edge is already there. If not we will add the edge.
+			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo() )) {
+				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(), item.getEdgeWeight().doubleValue());
+			}
+		}
+
+		return graph;
+	}
+
+	/**
+	 * Creates a directed graph from base source list.
+	 * 
+	 * @param baseSourceList
+	 *            the base source list with graph data.
+	 * @return a directed graph.
+	 */
+    private static Graph<String, DefaultWeightedEdge> createDirectedGraph(List<BaseSourceEdge> baseSourceList) {
+		
+		// Create an undirected graph.
+		DirectedGraph<String, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<String, DefaultWeightedEdge>(
+				DefaultWeightedEdge.class);
+
+		// Now we add the edge to the graph.
+		for (BaseSourceEdge item : baseSourceList) {
+			// If possible we try add the from vertex.
+			if (!graph.containsVertex(item.getVertexFrom())) {
+				graph.addVertex(item.getVertexFrom());
+			}
+			// If possible we try add the to vertex.
+			if (!graph.containsVertex(item.getVertexTo())) {
+				graph.addVertex(item.getVertexTo());
+			}
+			// Let's check if the edge is already there. If not we will add the
+			// edge.
+			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo())) {
+				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(),
+						item.getEdgeWeight().doubleValue());
+			}
+		}
+
+		return graph;
+	}
+
+	private static DirectedGraph<String, DefaultEdge> createTreeGraph() {
     	DirectedGraph<String, DefaultEdge> g =
                 new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
     	
