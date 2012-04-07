@@ -1,8 +1,6 @@
 package gka;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,6 +39,10 @@ public class ExampleJGraphT {
 
 	// Type of directed graph
 	private static String GRAPH_TYPE_DIRECTED = "#gerichtet";
+
+	private static List<String> setOfVertex = new ArrayList<String>();
+
+	private static boolean depthFirstFinish = false;
 
 	// Delimiter to split the edge source data
 	private static final String EDGE_SOURCE_DELIMITER = ",";
@@ -114,6 +116,15 @@ public class ExampleJGraphT {
         
         if (createdGraph != null) {
         	System.out.println("Graph : " + createdGraph.toString());
+        	
+        	// Now we try to find a vertex.
+        	String startVertex = setOfVertex.get((int) Math.round(Math.random()*(setOfVertex.size()-1)));
+        	String destinationVertex = setOfVertex.get((int) Math.round(Math.random()*(setOfVertex.size()-1)));
+        	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
+        	
+        	// First via depth first search.
+        	depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+        	
         } else {
         	// Could not create graph.
         	throw new RuntimeException("Error. Could not create valid error.");
@@ -131,6 +142,69 @@ public class ExampleJGraphT {
 
     
 	/**
+	 * Search the way between startVertex and destination vertex sing the depth
+	 * first search.
+	 * 
+	 * @param createdGraph
+	 *            the graph to search
+	 * @param startVertex
+	 *            the start vertex
+	 * @param destinationVertex
+	 *            the destination vertex
+	 */
+	private static void depthFirstSearchForVertex(
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex) {
+		System.out.println("Using depth first search.");
+		
+		if (startVertex.equals(destinationVertex)) {
+			System.out.println("Start vertex [" + startVertex + "] equals destination vertex [" + destinationVertex + "].");
+			return;
+		}
+		
+		// Now we make several recursive depth first steps.
+		recursiveDepthFirstStep(createdGraph, startVertex, destinationVertex, "");
+
+	}
+
+	/**
+	 * Recursive steps for depth first search.
+	 * 
+	 * @param createdGraph
+	 *            the graph to search
+	 * @param startVertex
+	 *            the start vertex
+	 * @param destinationVertex
+	 *            the destination vertex
+	 * @param predecessorVertex
+	 * 			  the predecessor vertex
+	 */
+	private static void recursiveDepthFirstStep(
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex, String predecessorVertex) {
+		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		if (neighborList == null || neighborList.size() == 0) {
+			return;
+		}
+		for (String vertex : neighborList) {
+			if (vertex.equals(predecessorVertex)) {
+				;
+			} else {
+				System.out.println("Vertex on stack [" + vertex + "].");
+				if (vertex.equals(destinationVertex)) {
+					System.out.println("Vertex found.");
+					depthFirstFinish = true;
+				}
+				if (depthFirstFinish) {
+					return;
+				}
+				recursiveDepthFirstStep(createdGraph, vertex,
+						destinationVertex, startVertex);
+			}
+		}
+	}
+
+	/**
 	 * Creates an undirected graph from base source list.
 	 * 
 	 * @param baseSourceList
@@ -147,15 +221,25 @@ public class ExampleJGraphT {
 		for (BaseSourceEdge item : baseSourceList) {
 			// If possible we try add the from vertex.
 			if (!graph.containsVertex(item.getVertexFrom())) {
+				System.out.println("Add vertex [" + item.getVertexFrom() + "].");
 				graph.addVertex(item.getVertexFrom());
+				setOfVertex.add(item.getVertexFrom());
 			}
 			// If possible we try add the to vertex.
 			if (!graph.containsVertex(item.getVertexTo())) {
+				System.out.println("Add vertex [" + item.getVertexTo() + "].");
 				graph.addVertex(item.getVertexTo());
+				setOfVertex.add(item.getVertexTo());
 			}
-			// Let's check if the edge is already there. If not we will add the edge.
-			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo() )) {
-				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(), item.getEdgeWeight().doubleValue());
+			// Let's check if the edge is already there. If not we will add the
+			// edge.
+			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo())) {
+				System.out.println("Add edge from vertex ["
+						+ item.getVertexFrom() + "] to vertex ["
+						+ item.getVertexTo() + "] with weigth ["
+						+ item.getEdgeWeight().doubleValue() + "]");
+				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(),
+						item.getEdgeWeight().doubleValue());
 			}
 		}
 
