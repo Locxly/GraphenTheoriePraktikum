@@ -44,6 +44,8 @@ public class ExampleJGraphT {
 
 	private static boolean depthFirstFinish = false;
 
+	private static boolean breadthFirstFinish = false;
+
 	// Delimiter to split the edge source data
 	private static final String EDGE_SOURCE_DELIMITER = ",";
 	
@@ -123,7 +125,18 @@ public class ExampleJGraphT {
         	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
         	
         	// First via depth first search.
-        	depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+//        	try {
+//        		depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+//        	} catch (Exception e) {
+//        		System.err.println("Finalize depth first search after exception.");
+//        	}
+        	
+        	// Now via breadth first search
+        	try {
+        		breadthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+        	} catch (Exception e) {
+        		System.err.println("Finalize breadth first search after exception.");
+        	}
         	
         } else {
         	// Could not create graph.
@@ -141,8 +154,81 @@ public class ExampleJGraphT {
     }
 
     
+    
+    
+    /**
+	 * Search the way between startVertex and destination vertex using the breadth
+	 * first search.
+	 * 
+	 * @param createdGraph
+	 *            the graph to search
+	 * @param startVertex
+	 *            the start vertex
+	 * @param destinationVertex
+	 *            the destination vertex
+	 */
+	private static void breadthFirstSearchForVertex(
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex) {
+		System.out.println("Using breadth first search.");
+		
+		if (startVertex.equals(destinationVertex)) {
+			System.out.println("Start vertex [" + startVertex + "] equals destination vertex [" + destinationVertex + "].");
+			return;
+		}
+		
+		recursiveBreadthFirstStep(createdGraph, startVertex, destinationVertex, "");
+	}
+
 	/**
-	 * Search the way between startVertex and destination vertex sing the depth
+	 * @param createdGraph
+	 * @param startVertex
+	 * @param destinationVertex
+	 */
+	private static void recursiveBreadthFirstStep(
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex, String predecessorVertex) {
+		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		if (neighborList == null || neighborList.size() == 0 || (neighborList.size() == 1 && neighborList.contains(predecessorVertex))) {
+			System.out.println("Vertex [" + startVertex + "] has no neighbours exept the pedecessor. It's time for the recursive step.");
+			return;
+		}
+		showNeighborListForVertex(startVertex, neighborList);
+		if (neighborList.contains(destinationVertex)) {
+			System.out.println("Vertex found.");
+			breadthFirstFinish  = true;
+			return;
+		}
+		
+		for (String vertex : neighborList) {
+			if (vertex.equals(predecessorVertex)) {
+				System.out.println("Skip vertex [" + vertex + "]. It is the predecessor [" + startVertex + "]");
+			} else {
+				System.out.println("Next vertex in List is [" + vertex + "].");
+				recursiveBreadthFirstStep(createdGraph, vertex, destinationVertex, startVertex);
+				if (breadthFirstFinish) {
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Display all vertex contains in the neighbor list for a vertex
+	 * 
+	 * @param vertex the vertex
+	 * @param neighborList the neighbor list
+	 */
+	private static void showNeighborListForVertex(String vertex, List<String> neighborList) {
+		System.out.print("Vertex [" + vertex + "] has following neighbor vertex [");
+		for (String neighbor : neighborList) {
+			System.out.print("(" + neighbor + ")");
+		}
+		System.out.println("].");
+	}
+
+	/**
+	 * Search the way between startVertex and destination vertex using the depth
 	 * first search.
 	 * 
 	 * @param createdGraph
