@@ -46,6 +46,8 @@ public class ExampleJGraphT {
 
 	private static boolean breadthFirstFinish = false;
 
+	private static List<String> vertexWayList;
+
 	// Delimiter to split the edge source data
 	private static final String EDGE_SOURCE_DELIMITER = ",";
 	
@@ -125,11 +127,11 @@ public class ExampleJGraphT {
         	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
         	
         	// First via depth first search.
-//        	try {
-//        		depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
-//        	} catch (Exception e) {
-//        		System.err.println("Finalize depth first search after exception.");
-//        	}
+        	try {
+        		depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+        	} catch (Exception e) {
+        		System.err.println("Finalize depth first search after exception.");
+        	}
         	
         	// Now via breadth first search
         	try {
@@ -177,8 +179,15 @@ public class ExampleJGraphT {
 			return;
 		}
 		
+		vertexWayList = new ArrayList<String>();
+		
+		vertexWayList.add(startVertex);
+		
 		recursiveBreadthFirstStep(createdGraph, startVertex, destinationVertex, "");
+		
+		displayFinalWayToVertex();
 	}
+
 
 	/**
 	 * @param createdGraph
@@ -188,43 +197,49 @@ public class ExampleJGraphT {
 	private static void recursiveBreadthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
 			String startVertex, String destinationVertex, String predecessorVertex) {
+		//displayFinalWayToVertex();
 		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
 		if (neighborList == null || neighborList.size() == 0 || (neighborList.size() == 1 && neighborList.contains(predecessorVertex))) {
 			System.out.println("Vertex [" + startVertex + "] has no neighbours exept the pedecessor. It's time for the recursive step.");
 			return;
 		}
-		showNeighborListForVertex(startVertex, neighborList);
-		if (neighborList.contains(destinationVertex)) {
-			System.out.println("Vertex found.");
-			breadthFirstFinish  = true;
-			return;
+		//showNeighborListForVertex(startVertex, neighborList);
+		for (String vertex : neighborList) {
+			vertexWayList.add(vertex);
+			displayFinalWayToVertex();
+			if (vertex.equals(destinationVertex)) {
+				System.out.println("Vertex found.");
+				breadthFirstFinish  = true;
+				return;
+			} else {
+				removeLastVertexFromWayToVertex(vertex);
+			}
 		}
 		
 		for (String vertex : neighborList) {
 			if (vertex.equals(predecessorVertex)) {
 				System.out.println("Skip vertex [" + vertex + "]. It is the predecessor [" + startVertex + "]");
 			} else {
-				System.out.println("Next vertex in List is [" + vertex + "].");
+				if (vertexWayList.contains(vertex)) {
+					break;
+				}
+				//System.out.println("Next vertex in List is [" + vertex + "].");
+				vertexWayList.add(vertex);
 				recursiveBreadthFirstStep(createdGraph, vertex, destinationVertex, startVertex);
 				if (breadthFirstFinish) {
 					return;
+				} else {
+					removeLastVertexFromWayToVertex(vertex);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Display all vertex contains in the neighbor list for a vertex
-	 * 
-	 * @param vertex the vertex
-	 * @param neighborList the neighbor list
+	 * @param vertex
 	 */
-	private static void showNeighborListForVertex(String vertex, List<String> neighborList) {
-		System.out.print("Vertex [" + vertex + "] has following neighbor vertex [");
-		for (String neighbor : neighborList) {
-			System.out.print("(" + neighbor + ")");
-		}
-		System.out.println("].");
+	private static void removeLastVertexFromWayToVertex(String vertex) {
+		vertexWayList.remove(vertexWayList.lastIndexOf(vertex));
 	}
 
 	/**
@@ -248,9 +263,14 @@ public class ExampleJGraphT {
 			return;
 		}
 		
+		vertexWayList = new ArrayList<String>();
+		
+		vertexWayList.add(startVertex);
+		
 		// Now we make several recursive depth first steps.
 		recursiveDepthFirstStep(createdGraph, startVertex, destinationVertex, "");
 
+		displayFinalWayToVertex();
 	}
 
 	/**
@@ -268,26 +288,69 @@ public class ExampleJGraphT {
 	private static void recursiveDepthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
 			String startVertex, String destinationVertex, String predecessorVertex) {
+		displayFinalWayToVertex();
 		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
 		if (neighborList == null || neighborList.size() == 0) {
 			return;
 		}
+		//showNeighborListForVertex(startVertex, neighborList);
 		for (String vertex : neighborList) {
+			if (depthFirstFinish) {
+				return;
+			}
 			if (vertex.equals(predecessorVertex)) {
 				;
 			} else {
-				System.out.println("Vertex on stack [" + vertex + "].");
+				if (vertexWayList.contains(vertex)) {
+					break;
+				}
+				//System.out.println("Vertex on stack [" + vertex + "].");
 				if (vertex.equals(destinationVertex)) {
 					System.out.println("Vertex found.");
 					depthFirstFinish = true;
 				}
+				vertexWayList.add(vertex);
 				if (depthFirstFinish) {
 					return;
 				}
 				recursiveDepthFirstStep(createdGraph, vertex,
 						destinationVertex, startVertex);
+				if (!depthFirstFinish) {
+					removeLastVertexFromWayToVertex(vertex);
+				}
 			}
 		}
+	}
+	
+	/**
+	 * Display all vertex contains in the neighbor list for a vertex
+	 * 
+	 * @param vertex the vertex
+	 * @param neighborList the neighbor list
+	 */
+	private static void showNeighborListForVertex(String vertex, List<String> neighborList) {
+		System.out.print("Vertex [" + vertex + "] has following neighbor vertex [");
+		for (String neighbor : neighborList) {
+			System.out.print("(" + neighbor + ")");
+		}
+		System.out.println("].");
+	}
+
+	/**
+	 * Display the content of the final way to vertex.
+	 */
+	private static void displayFinalWayToVertex() {
+		System.out.print("Way from start vertex to destination vertex was : [");
+		int count = 1;
+		for (String vertex : vertexWayList) {
+			if (count < vertexWayList.size()) {
+				System.out.print("{" + vertex + "} -> ");
+				count++;
+			} else {
+				System.out.print("{" + vertex + "}");
+			}
+		}
+		System.out.println("].");
 	}
 
 	/**
