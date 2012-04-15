@@ -1,7 +1,5 @@
 package gka;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,11 +11,9 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.WeightedMultigraph;
 
 
 /**
@@ -33,24 +29,12 @@ import org.jgrapht.graph.WeightedMultigraph;
  */
 public class ExampleJGraphT {
 
-	// Constants
-	// Type of undirected graph
-	private static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
-
-	// Type of directed graph
-	private static String GRAPH_TYPE_DIRECTED = "#gerichtet";
-
-	private static List<String> setOfVertex = new ArrayList<String>();
-
 	private static boolean depthFirstFinish = false;
 
 	private static boolean breadthFirstFinish = false;
 
 	private static List<String> vertexWayList;
 
-	// Delimiter to split the edge source data
-	private static final String EDGE_SOURCE_DELIMITER = ",";
-	
 	//~ Constructors ----------------------------------------------------------
     private ExampleJGraphT()
     {
@@ -64,66 +48,15 @@ public class ExampleJGraphT {
      * @throws IOException Error during process the input file.
      */
     public static void main(String [] args) throws IOException
-    {
-//        UndirectedGraph<String, DefaultEdge> stringGraph = createStringGraph();
-//
-//        // note undirected edges are printed as: {<v1>,<v2>}
-//        System.out.println(stringGraph.toString());
-//
-//        // create a graph based on URL objects
-//        DirectedGraph<URL, DefaultEdge> hrefGraph = createHrefGraph();
-//
-//        // note directed edges are printed as: (<v1>,<v2>)
-//        System.out.println(hrefGraph.toString());
-    	
-    	BufferedReader input = new BufferedReader(new FileReader("/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph"));
-    	
-        // First we try to get the type of the graph.
-        String graphType = input.readLine();
-        if (!graphType.equals(GRAPH_TYPE_DIRECTED) && !graphType.equals(GRAPH_TYPE_UNDIRECTED) ) {
-        	// Type of graph is not supported.
-        	throw new RuntimeException("Error in dataset line [1]. Graph type [" + graphType + "] is not supported.");
-        }
-        
-        // Next we get the data from the file.
-        int count = 1; 
-        List<BaseSourceEdge> baseSourceList = new ArrayList<BaseSourceEdge>();
-        String line = "";
-        while ((line = input.readLine()) != null) {
-        	count++;
-        	String[] edgeSource = line.split(EDGE_SOURCE_DELIMITER);
-        	BaseSourceEdge source = new BaseSourceEdge();
-        	if (edgeSource.length == 3) {
-				source.setVertexFrom(edgeSource[0]);
-				source.setVertexTo(edgeSource[1]);
-				source.setEdgeWeight(Long.parseLong(edgeSource[2]));
-			} else if (edgeSource.length == 2) {
-				source.setVertexFrom(edgeSource[0]);
-				source.setVertexTo(edgeSource[1]);
-				source.setEdgeWeight(0L);
-        	} else {
-        		// If array length is either 3 nor 2 the dataset is invalid.
-        		throw new RuntimeException("Error in dataset line [" + count + "]. Count of attribute is [" + edgeSource.length + "].");
-        	}
-        	baseSourceList.add(source);
-        }
-        input.close();
-        
-        Graph<String,DefaultWeightedEdge> createdGraph = null;
-        if (GRAPH_TYPE_DIRECTED.equals(graphType)) {
-        	// We need a directed graph so let's create one.
-        	createdGraph = createDirectedGraph(baseSourceList);
-        } else if (GRAPH_TYPE_UNDIRECTED.endsWith(graphType)) {
-        	// We need an undirected graph so let's create one.
-        	createdGraph = createUndirectedGraph(baseSourceList);
-        }
+    {    	
+    	Graph<String, DefaultWeightedEdge> createdGraph = GKAGraphUtils.readGraphFromFile();
         
         if (createdGraph != null) {
         	System.out.println("Graph : " + createdGraph.toString());
         	
         	// Now we try to find a vertex.
-        	String startVertex = setOfVertex.get((int) Math.round(Math.random()*(setOfVertex.size()-1)));
-        	String destinationVertex = setOfVertex.get((int) Math.round(Math.random()*(setOfVertex.size()-1)));
+        	String startVertex = GKAGraphUtils.setOfVertex.get((int) Math.round(Math.random()*(GKAGraphUtils.setOfVertex.size()-1)));
+        	String destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math.round(Math.random()*(GKAGraphUtils.setOfVertex.size()-1)));
         	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
         	
         	// First via depth first search.
@@ -145,20 +78,9 @@ public class ExampleJGraphT {
         	throw new RuntimeException("Error. Could not create valid error.");
         }
         
-//        // Tree graph
-//        DirectedGraph<String, DefaultEdge> treeGraph = createTreeGraph();
-//        
-//        System.out.println(treeGraph.toString());
-//        
-//        List<String> predNode3 = Graphs.neighborListOf(treeGraph, "Node_3");
-//        
-//        System.out.println(predNode3.toString());
     }
 
-    
-    
-    
-    /**
+	/**
 	 * Search the way between startVertex and destination vertex using the breadth
 	 * first search.
 	 * 
@@ -174,61 +96,92 @@ public class ExampleJGraphT {
 			String startVertex, String destinationVertex) {
 		System.out.println("Using breadth first search.");
 		
+		// First check if start and destination vertex are equal.
 		if (startVertex.equals(destinationVertex)) {
-			System.out.println("Start vertex [" + startVertex + "] equals destination vertex [" + destinationVertex + "].");
+			System.out.println("Start vertex [" + startVertex
+					+ "] equals destination vertex [" + destinationVertex
+					+ "].");
 			return;
 		}
-		
+
+		// Initialize the way to destination list.
 		vertexWayList = new ArrayList<String>();
-		
+
+		// Add the start vertex to way to destination list.
 		vertexWayList.add(startVertex);
-		
+
+		// Now we make several recursive depth first steps.
 		recursiveBreadthFirstStep(createdGraph, startVertex, destinationVertex, "");
-		
+
+		// Display the final way to destination.
 		displayFinalWayToVertex();
 	}
 
 
 	/**
+	 * Recursive step for the breadth first search.
+	 * 
 	 * @param createdGraph
+	 *            the graph to search
 	 * @param startVertex
+	 *            the start vertex
 	 * @param destinationVertex
+	 *            the destination vertex
+	 * @param predecessorVertex
+	 * 			  the predecessor vertex
 	 */
 	private static void recursiveBreadthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
 			String startVertex, String destinationVertex, String predecessorVertex) {
-		//displayFinalWayToVertex();
+		
+		// Calculate the neighbor list for the actual vertex. Keep in mind that the predecessor vertex is also contained in this list.
 		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		
+		// Check if the neighbor list only contains the predecessor as neighbor. If the case happens we could skip the processing of this vertex.
 		if (neighborList == null || neighborList.size() == 0 || (neighborList.size() == 1 && neighborList.contains(predecessorVertex))) {
 			System.out.println("Vertex [" + startVertex + "] has no neighbours exept the pedecessor. It's time for the recursive step.");
 			return;
 		}
 		//showNeighborListForVertex(startVertex, neighborList);
+		
+		// Now check in the breadth if the destination vertex is contained in the neighbor list. We check vertex after vertex.
 		for (String vertex : neighborList) {
+			// First we add the actual vertex to the way to destination.
 			vertexWayList.add(vertex);
+			// Now we display the actual state of the way to destination.
 			displayFinalWayToVertex();
+			// If the actual vertex is the destination vertex we can finish the search.
 			if (vertex.equals(destinationVertex)) {
 				System.out.println("Vertex found.");
+				// Set the breadth first finish marker to 'TRUE'.
 				breadthFirstFinish  = true;
 				return;
 			} else {
+				// If the actual vertex is not the destination vertex we will remove it from the way to destination.
 				removeLastVertexFromWayToVertex(vertex);
 			}
 		}
 		
+		// After the complete breadth search we start to process the vertex for subsequent search.
 		for (String vertex : neighborList) {
+			// If vertex is the predecessor we will skip it.
 			if (vertex.equals(predecessorVertex)) {
 				System.out.println("Skip vertex [" + vertex + "]. It is the predecessor [" + startVertex + "]");
 			} else {
+				// If the actual vertex is already contained in the way to destination list we will have a circle. So we skip the processing of this vertex.
 				if (vertexWayList.contains(vertex)) {
 					break;
 				}
 				//System.out.println("Next vertex in List is [" + vertex + "].");
+				// Add the actual vertex to the vertex way to destination list.
 				vertexWayList.add(vertex);
+				// Start the recursive process for this vertex.
 				recursiveBreadthFirstStep(createdGraph, vertex, destinationVertex, startVertex);
+				// If we found the destination vertex during the recursive process we can skip more processing.
 				if (breadthFirstFinish) {
 					return;
 				} else {
+					// If we didn't find the destination vertex we can remove this vertex from way to destination.
 					removeLastVertexFromWayToVertex(vertex);
 				}
 			}
@@ -236,7 +189,9 @@ public class ExampleJGraphT {
 	}
 
 	/**
-	 * @param vertex
+	 * This method removes the last element of the the given vertex from the vertex way to destination list.
+	 * 
+	 * @param vertex the last element of this vertex shall be deleted.
 	 */
 	private static void removeLastVertexFromWayToVertex(String vertex) {
 		vertexWayList.remove(vertexWayList.lastIndexOf(vertex));
@@ -258,18 +213,22 @@ public class ExampleJGraphT {
 			String startVertex, String destinationVertex) {
 		System.out.println("Using depth first search.");
 		
+		// First check if start and destination vertex are equal.
 		if (startVertex.equals(destinationVertex)) {
 			System.out.println("Start vertex [" + startVertex + "] equals destination vertex [" + destinationVertex + "].");
 			return;
 		}
 		
+		// Initialize the way to destination list.
 		vertexWayList = new ArrayList<String>();
 		
+		// Add the start vertex to way to destination list.
 		vertexWayList.add(startVertex);
 		
 		// Now we make several recursive depth first steps.
 		recursiveDepthFirstStep(createdGraph, startVertex, destinationVertex, "");
 
+		// Display the final way to destination.
 		displayFinalWayToVertex();
 	}
 
@@ -288,33 +247,55 @@ public class ExampleJGraphT {
 	private static void recursiveDepthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
 			String startVertex, String destinationVertex, String predecessorVertex) {
+		// Display the actual state of the way to destination list.
 		displayFinalWayToVertex();
+		
+		// Calculate the neighbor list for the actual vertex. Keep in mind that the predecessor vertex is also contained in this list.
 		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		
+		// If neighbor list is empty we skip the work flow for this vertex. Keep in mind that this could maybe never happen because the predecessor is always contained in the neighbor list.
 		if (neighborList == null || neighborList.size() == 0) {
 			return;
 		}
 		//showNeighborListForVertex(startVertex, neighborList);
+		
+		// Now keep on working for all vertex in the list.
 		for (String vertex : neighborList) {
+			// If destination vertex still found skip the work flow and return to caller. We should get back to primary recursive start.
 			if (depthFirstFinish) {
 				return;
 			}
+			
+			// If the actual vertex is the predecessor vertex we skip this vertex.
 			if (vertex.equals(predecessorVertex)) {
 				;
 			} else {
+				// If the actual vertex is already contained in the way to destination list we will have a circle. So we skip the processing of this vertex.
 				if (vertexWayList.contains(vertex)) {
 					break;
 				}
 				//System.out.println("Vertex on stack [" + vertex + "].");
+				
+				// If the actual vertex is the destination vertex we have finished the search and can return to primary recursive start.
 				if (vertex.equals(destinationVertex)) {
 					System.out.println("Vertex found.");
+					// Set the depth first finish mark to 'TRUE'. This shows that the search is finished.
 					depthFirstFinish = true;
 				}
+				
+				// Add the actual vertex to the way to destination list.
 				vertexWayList.add(vertex);
+				
+				// If search is finished we cancel all former processes.
 				if (depthFirstFinish) {
 					return;
 				}
+				
+				// The next recursive step for the actual vertex. We go deeper into the graph on this vertex.
 				recursiveDepthFirstStep(createdGraph, vertex,
 						destinationVertex, startVertex);
+				
+				// If the search is not finished for this vertex we will remove it from way to destination list because the vertex is not part of the way to destination.
 				if (!depthFirstFinish) {
 					removeLastVertexFromWayToVertex(vertex);
 				}
@@ -322,20 +303,6 @@ public class ExampleJGraphT {
 		}
 	}
 	
-	/**
-	 * Display all vertex contains in the neighbor list for a vertex
-	 * 
-	 * @param vertex the vertex
-	 * @param neighborList the neighbor list
-	 */
-	private static void showNeighborListForVertex(String vertex, List<String> neighborList) {
-		System.out.print("Vertex [" + vertex + "] has following neighbor vertex [");
-		for (String neighbor : neighborList) {
-			System.out.print("(" + neighbor + ")");
-		}
-		System.out.println("].");
-	}
-
 	/**
 	 * Display the content of the final way to vertex.
 	 */
@@ -351,82 +318,6 @@ public class ExampleJGraphT {
 			}
 		}
 		System.out.println("].");
-	}
-
-	/**
-	 * Creates an undirected graph from base source list.
-	 * 
-	 * @param baseSourceList
-	 *            the base source list with graph data.
-	 * @return an undirected graph.
-	 */
-	private static UndirectedGraph<String,DefaultWeightedEdge> createUndirectedGraph(List<BaseSourceEdge> baseSourceList) {
-		
-		// Create an undirected graph.
-		UndirectedGraph<String, DefaultWeightedEdge> graph = new WeightedMultigraph<String, DefaultWeightedEdge>(
-				DefaultWeightedEdge.class);
-
-		// Now we add the edge to the graph.
-		for (BaseSourceEdge item : baseSourceList) {
-			// If possible we try add the from vertex.
-			if (!graph.containsVertex(item.getVertexFrom())) {
-				System.out.println("Add vertex [" + item.getVertexFrom() + "].");
-				graph.addVertex(item.getVertexFrom());
-				setOfVertex.add(item.getVertexFrom());
-			}
-			// If possible we try add the to vertex.
-			if (!graph.containsVertex(item.getVertexTo())) {
-				System.out.println("Add vertex [" + item.getVertexTo() + "].");
-				graph.addVertex(item.getVertexTo());
-				setOfVertex.add(item.getVertexTo());
-			}
-			// Let's check if the edge is already there. If not we will add the
-			// edge.
-			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo())) {
-				System.out.println("Add edge from vertex ["
-						+ item.getVertexFrom() + "] to vertex ["
-						+ item.getVertexTo() + "] with weigth ["
-						+ item.getEdgeWeight().doubleValue() + "]");
-				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(),
-						item.getEdgeWeight().doubleValue());
-			}
-		}
-
-		return graph;
-	}
-
-	/**
-	 * Creates a directed graph from base source list.
-	 * 
-	 * @param baseSourceList
-	 *            the base source list with graph data.
-	 * @return a directed graph.
-	 */
-    private static Graph<String, DefaultWeightedEdge> createDirectedGraph(List<BaseSourceEdge> baseSourceList) {
-		
-		// Create an undirected graph.
-		DirectedGraph<String, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<String, DefaultWeightedEdge>(
-				DefaultWeightedEdge.class);
-
-		// Now we add the edge to the graph.
-		for (BaseSourceEdge item : baseSourceList) {
-			// If possible we try add the from vertex.
-			if (!graph.containsVertex(item.getVertexFrom())) {
-				graph.addVertex(item.getVertexFrom());
-			}
-			// If possible we try add the to vertex.
-			if (!graph.containsVertex(item.getVertexTo())) {
-				graph.addVertex(item.getVertexTo());
-			}
-			// Let's check if the edge is already there. If not we will add the
-			// edge.
-			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo())) {
-				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(),
-						item.getEdgeWeight().doubleValue());
-			}
-		}
-
-		return graph;
 	}
 
 	private static DirectedGraph<String, DefaultEdge> createTreeGraph() {
