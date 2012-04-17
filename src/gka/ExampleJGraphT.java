@@ -1,5 +1,6 @@
 package gka;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,12 +45,29 @@ public class ExampleJGraphT {
     /**
      * The starting point for the demo.
      *
-     * @param args ignored.
+     * @param args in the first arg the file name could be inserted. If empty take the default one.
      * @throws IOException Error during process the input file.
      */
-    public static void main(String [] args) throws IOException
-    {    	
-    	Graph<String, DefaultWeightedEdge> createdGraph = GKAGraphUtils.readGraphFromFile();
+    public static void main(String[] args) throws IOException {
+    	
+    	Graph<String, DefaultWeightedEdge> createdGraph = null;
+    	
+		try {
+			if (args != null && args.length > 0 && args[0] != "") {
+				System.out.println("File name found. Take this one.");
+				createdGraph = GKAGraphUtils.readGraphFromFile(args[0]);
+			} else {
+				System.out.println("Take the default file location.");
+				createdGraph = GKAGraphUtils
+						.readGraphFromFile(GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION);
+			}
+		} catch (FileNotFoundException ex) {
+			throw new RuntimeException(
+					"Error during read file. Could not read file!");
+		} catch (IOException e) {
+			throw new RuntimeException(
+					"Error during read file. Could not handle file!");
+		}
         
         if (createdGraph != null) {
         	System.out.println("Graph : " + createdGraph.toString());

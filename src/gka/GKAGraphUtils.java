@@ -26,6 +26,8 @@ import org.jgrapht.graph.WeightedMultigraph;
  */
 public class GKAGraphUtils {
 
+	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph";
+
 	// Constants
 	// Type of undirected graph
 	static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
@@ -47,10 +49,10 @@ public class GKAGraphUtils {
 	 * @throws RuntimeException
 	 * @throws NumberFormatException
 	 */
-	static Graph<String, DefaultWeightedEdge> readGraphFromFile()
+	static Graph<String, DefaultWeightedEdge> readGraphFromFile(String graphFileLocation)
 			throws FileNotFoundException, IOException, RuntimeException,
 			NumberFormatException {
-		BufferedReader input = new BufferedReader(new FileReader("/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph"));
+		BufferedReader input = new BufferedReader(new FileReader(graphFileLocation));
 		
 	    // First we try to get the type of the graph.
 	    String graphType = input.readLine();
