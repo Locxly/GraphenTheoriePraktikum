@@ -50,17 +50,68 @@ public class ExampleJGraphT {
      */
     public static void main(String[] args) throws IOException {
     	
+    	// Instruction to use the Jar file.
+    	if (args != null && args.length != 0 && args[0].equals("howto")) {
+    		System.out.println("Please note the following use instruction : Type arg[0] as ...");
+    		System.out.println("0 -> default use of params.");
+    		System.out.println("1 -> arg[1] contains filename.");
+    		System.out.println("2 -> arg[1] start vertex, arg[2] destination vertex.");
+    		System.out.println("3 -> arg[1] filename, arg[2] start vertex, arg[3] destination vertex.");
+    		return;
+    	}
+    	
+    	// Initialize the runtime attributes in default state
+    	String filename = GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION;
+    	String startVertex = null;
+    	String destinationVertex = null;
+    	
+    	// Switch case for use mode
+		if (args != null && args.length != 0 && args[0] != "") {
+			int stateOfCase = Integer.parseInt(args[0]);
+			switch (stateOfCase) {
+			case 0:
+				break;
+			case 1:
+				if (args[1] != null) {
+					filename = args[1];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. File name requested, but no file name available.");
+				}
+				break;
+			case 2:
+				if (args[1] != null && args[2] != null) {
+					startVertex = args[1];
+					destinationVertex = args[2];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. Start and destination vertex requested, but no vertex available.");
+				}
+				break;
+			case 3:
+				if (args[1] != null) {
+					filename = args[1];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. File name requested, but no file name available.");
+				}
+				if (args[2] != null && args[3] != null) {
+					startVertex = args[2];
+					destinationVertex = args[3];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. Start and destination vertex requested, but no vertex available.");
+				}
+			default:
+				break;
+			}
+		}
+    	
     	Graph<String, DefaultWeightedEdge> createdGraph = null;
     	
+    	// Create the graph.
 		try {
-			if (args != null && args.length > 0 && args[0] != "") {
-				System.out.println("File name found. Take this one.");
-				createdGraph = GKAGraphUtils.readGraphFromFile(args[0]);
-			} else {
-				System.out.println("Take the default file location.");
-				createdGraph = GKAGraphUtils
-						.readGraphFromFile(GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION);
-			}
+			createdGraph = GKAGraphUtils.readGraphFromFile(filename);
 		} catch (FileNotFoundException ex) {
 			throw new RuntimeException(
 					"Error during read file. Could not read file!");
@@ -72,9 +123,17 @@ public class ExampleJGraphT {
         if (createdGraph != null) {
         	System.out.println("Graph : " + createdGraph.toString());
         	
-        	// Now we try to find a vertex.
-        	String startVertex = GKAGraphUtils.setOfVertex.get((int) Math.round(Math.random()*(GKAGraphUtils.setOfVertex.size()-1)));
-        	String destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math.round(Math.random()*(GKAGraphUtils.setOfVertex.size()-1)));
+        	// Now we try to find start and destination vertex if vertex are empty.
+			if (startVertex == null) {
+				startVertex = GKAGraphUtils.setOfVertex.get((int) Math
+						.round(Math.random()
+								* (GKAGraphUtils.setOfVertex.size() - 1)));
+			}
+			if (destinationVertex == null) {
+				destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math
+						.round(Math.random()
+								* (GKAGraphUtils.setOfVertex.size() - 1)));
+			}
         	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
         	
         	// First via depth first search.
