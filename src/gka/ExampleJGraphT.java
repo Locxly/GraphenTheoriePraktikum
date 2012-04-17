@@ -141,7 +141,7 @@ public class ExampleJGraphT {
 	 * 
 	 * @param createdGraph
 	 *            the graph to search
-	 * @param startVertex
+	 * @param workingVertex
 	 *            the start vertex
 	 * @param destinationVertex
 	 *            the destination vertex
@@ -150,14 +150,14 @@ public class ExampleJGraphT {
 	 */
 	private static void recursiveBreadthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
-			String startVertex, String destinationVertex, String predecessorVertex) {
+			String workingVertex, String destinationVertex, String predecessorVertex) {
 		
 		// Calculate the neighbor list for the actual vertex. Keep in mind that the predecessor vertex is also contained in this list.
-		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		List<String> neighborList = Graphs.neighborListOf(createdGraph, workingVertex);
 		
 		// Check if the neighbor list only contains the predecessor as neighbor. If the case happens we could skip the processing of this vertex.
 		if (neighborList == null || neighborList.size() == 0 || (neighborList.size() == 1 && neighborList.contains(predecessorVertex))) {
-			System.out.println("Vertex [" + startVertex + "] has no neighbours exept the pedecessor. It's time for the recursive step.");
+			System.out.println("Vertex [" + workingVertex + "] has no neighbours exept the pedecessor. It's time for the recursive step.");
 			return;
 		}
 		//showNeighborListForVertex(startVertex, neighborList);
@@ -184,7 +184,7 @@ public class ExampleJGraphT {
 		for (String vertex : neighborList) {
 			// If vertex is the predecessor we will skip it.
 			if (vertex.equals(predecessorVertex)) {
-				System.out.println("Skip vertex [" + vertex + "]. It is the predecessor [" + startVertex + "]");
+				System.out.println("Skip vertex [" + vertex + "]. It is the predecessor [" + workingVertex + "]");
 			} else {
 				// If the actual vertex is already contained in the way to destination list we will have a circle. So we skip the processing of this vertex.
 				if (vertexWayList.contains(vertex)) {
@@ -194,7 +194,7 @@ public class ExampleJGraphT {
 				// Add the actual vertex to the vertex way to destination list.
 				vertexWayList.add(vertex);
 				// Start the recursive process for this vertex.
-				recursiveBreadthFirstStep(createdGraph, vertex, destinationVertex, startVertex);
+				recursiveBreadthFirstStep(createdGraph, vertex, destinationVertex, workingVertex);
 				// If we found the destination vertex during the recursive process we can skip more processing.
 				if (breadthFirstFinish) {
 					return;
@@ -255,7 +255,7 @@ public class ExampleJGraphT {
 	 * 
 	 * @param createdGraph
 	 *            the graph to search
-	 * @param startVertex
+	 * @param workingVertex
 	 *            the start vertex
 	 * @param destinationVertex
 	 *            the destination vertex
@@ -264,12 +264,12 @@ public class ExampleJGraphT {
 	 */
 	private static void recursiveDepthFirstStep(
 			Graph<String, DefaultWeightedEdge> createdGraph,
-			String startVertex, String destinationVertex, String predecessorVertex) {
+			String workingVertex, String destinationVertex, String predecessorVertex) {
 		// Display the actual state of the way to destination list.
 		displayFinalWayToVertex();
 		
 		// Calculate the neighbor list for the actual vertex. Keep in mind that the predecessor vertex is also contained in this list.
-		List<String> neighborList = Graphs.neighborListOf(createdGraph, startVertex);
+		List<String> neighborList = Graphs.neighborListOf(createdGraph, workingVertex);
 		
 		// If neighbor list is empty we skip the work flow for this vertex. Keep in mind that this could maybe never happen because the predecessor is always contained in the neighbor list.
 		if (neighborList == null || neighborList.size() == 0) {
@@ -311,7 +311,7 @@ public class ExampleJGraphT {
 				
 				// The next recursive step for the actual vertex. We go deeper into the graph on this vertex.
 				recursiveDepthFirstStep(createdGraph, vertex,
-						destinationVertex, startVertex);
+						destinationVertex, workingVertex);
 				
 				// If the search is not finished for this vertex we will remove it from way to destination list because the vertex is not part of the way to destination.
 				if (!depthFirstFinish) {
