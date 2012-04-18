@@ -21,11 +21,24 @@ import org.jgrapht.graph.SimpleGraph;
 
 /**
  * GKA group 6
- */
-
-/**
- * We try the new library and explore the possibilities to create graphs and so
- * on. This is the HelloJGraph example from source forge.
+ * 
+ * Dokumentationskopf
+ * ------------------
+ *
+ * Team 6: 					Stephan Hölscher, Milena Dreier
+ *
+ * Aufgabenaufteilung: 		Gemeinsame Bearbeitung der gesamten Aufgabe
+ *							Verwendung von Saros zur gemeinsamen Entwicklung
+ *
+ * Quellenangaben: 			https://github.com/jgrapht/jgrapht/wiki/HelloWorld
+ * 							http://jgrapht.org/javadoc/
+ * 							Christoph Klauck, Christoph Mass: Graphentheorie für Studierende der Informatik, 4. Auflage.
+ * 
+ * Bearbeitungszeitraum: 	Start am 04.04.2012, Fertigstellung am 17.04.2012
+ * 							tägliche Bearbeitung (Ausnahme Ostern) von ca. 1 Stunde
+ *
+ * Aktueller Stand:			fertig :)
+ *							eventuell Änderungen am Programmier-Stil und zur Optimierung nötig
  * 
  * @author hoelschers, dreierm
  * 
