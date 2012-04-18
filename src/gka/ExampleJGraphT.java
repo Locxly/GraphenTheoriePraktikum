@@ -27,7 +27,7 @@ import org.jgrapht.graph.SimpleGraph;
  * We try the new library and explore the possibilities to create graphs and so
  * on. This is the HelloJGraph example from source forge.
  * 
- * @author hoelschers
+ * @author hoelschers, dreierm
  * 
  */
 public class ExampleJGraphT {
@@ -134,6 +134,7 @@ public class ExampleJGraphT {
 			int stateOfCase = Integer.parseInt(args[0]);
 			switch (stateOfCase) {
 			case 0:
+				filename = "graph_01.graph";
 				break;
 			case 1:
 				if (args[1] != null) {
@@ -144,6 +145,7 @@ public class ExampleJGraphT {
 				}
 				break;
 			case 2:
+				filename = "graph_01.graph";
 				if (args[1] != null && args[2] != null) {
 					startVertex = args[1];
 					destinationVertex = args[2];

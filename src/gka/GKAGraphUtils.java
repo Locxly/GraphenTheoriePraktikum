@@ -21,7 +21,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 /**
  * This class contains some utilities to create and display a graph and other structures.
  * 
- * @author hoelschers
+ * @author hoelschers, dreierm
  *
  */
 public class GKAGraphUtils {
