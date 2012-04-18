@@ -31,7 +31,9 @@ public class GKAGraphUtils {
 	// Constants
 	// Type of undirected graph
 	static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
-
+//Hallo :)
+	
+	
 	// Type of directed graph
 	static String GRAPH_TYPE_DIRECTED = "#gerichtet";
 	
