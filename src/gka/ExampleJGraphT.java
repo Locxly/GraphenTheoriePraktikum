@@ -30,7 +30,7 @@ import org.jgrapht.graph.SimpleGraph;
  */
 public class ExampleJGraphT {
 
-	private static boolean FirstFinish = false;
+	private static boolean depthFirstFinish = false;
 
 	private static boolean breadthFirstFinish = false;
 
