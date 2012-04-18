@@ -27,7 +27,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 public class GKAGraphUtils {
 
 	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph";
-// Hallo
+// Hallo test
 	// Constants
 	// Type of undirected graph
 	static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
