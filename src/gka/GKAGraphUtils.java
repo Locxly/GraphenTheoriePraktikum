@@ -28,10 +28,14 @@ public class GKAGraphUtils {
 
 	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_01.graph";
 // Hallo test
+
+
 	// Constants
 	// Type of undirected graph
 	static String GRAPH_TYPE_UNDIRECTED = "#ungerichtet";
-
+//Hallo :)
+	
+	
 	// Type of directed graph
 	static String GRAPH_TYPE_DIRECTED = "#gerichtet";
 	
