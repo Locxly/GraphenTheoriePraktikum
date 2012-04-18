@@ -35,6 +35,11 @@ public class ExampleJGraphT {
 	private static boolean breadthFirstFinish = false;
 
 	private static List<String> vertexWayList;
+	
+	// Initialize the runtime attributes in default state
+	private static String filename = GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION;
+	private static String startVertex = null;
+	private static String destinationVertex = null;
 
 	//~ Constructors ----------------------------------------------------------
     private ExampleJGraphT()
@@ -50,62 +55,7 @@ public class ExampleJGraphT {
      */
     public static void main(String[] args) throws IOException {
     	
-    	// Instruction to use the Jar file.
-    	if (args != null && args.length != 0 && args[0].equals("howto")) {
-    		System.out.println("Please note the following use instruction : Type arg[0] as ...");
-    		System.out.println("0 -> default use of params.");
-    		System.out.println("1 -> arg[1] contains filename.");
-    		System.out.println("2 -> arg[1] start vertex, arg[2] destination vertex.");
-    		System.out.println("3 -> arg[1] filename, arg[2] start vertex, arg[3] destination vertex.");
-    		return;
-    	}
-    	
-    	// Initialize the runtime attributes in default state
-    	String filename = GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION;
-    	String startVertex = null;
-    	String destinationVertex = null;
-    	
-    	// Switch case for use mode
-		if (args != null && args.length != 0 && args[0] != "") {
-			int stateOfCase = Integer.parseInt(args[0]);
-			switch (stateOfCase) {
-			case 0:
-				break;
-			case 1:
-				if (args[1] != null) {
-					filename = args[1];
-				} else {
-					throw new RuntimeException(
-							"Error during start app. File name requested, but no file name available.");
-				}
-				break;
-			case 2:
-				if (args[1] != null && args[2] != null) {
-					startVertex = args[1];
-					destinationVertex = args[2];
-				} else {
-					throw new RuntimeException(
-							"Error during start app. Start and destination vertex requested, but no vertex available.");
-				}
-				break;
-			case 3:
-				if (args[1] != null) {
-					filename = args[1];
-				} else {
-					throw new RuntimeException(
-							"Error during start app. File name requested, but no file name available.");
-				}
-				if (args[2] != null && args[3] != null) {
-					startVertex = args[2];
-					destinationVertex = args[3];
-				} else {
-					throw new RuntimeException(
-							"Error during start app. Start and destination vertex requested, but no vertex available.");
-				}
-			default:
-				break;
-			}
-		}
+    	startUpProcedure(args);
     	
     	Graph<String, DefaultWeightedEdge> createdGraph = null;
     	
@@ -156,6 +106,69 @@ public class ExampleJGraphT {
         }
         
     }
+
+	/**
+	 * Procedure to handle the application start up.
+	 * 
+	 * @param args the argument array from start up
+	 * @throws NumberFormatException
+	 * @throws RuntimeException
+	 */
+	private static void startUpProcedure(String[] args)
+			throws NumberFormatException, RuntimeException {
+		// Instruction to use the Jar file.
+    	if (args != null && args.length != 0 && args[0].equals("howto")) {
+    		System.out.println("Please note the following use instruction : Type arg[0] as ...");
+    		System.out.println("0 -> default use of params.");
+    		System.out.println("1 -> arg[1] contains filename.");
+    		System.out.println("2 -> arg[1] start vertex, arg[2] destination vertex.");
+    		System.out.println("3 -> arg[1] filename, arg[2] start vertex, arg[3] destination vertex.");
+    		System.exit(0);
+    	}
+    	
+    	
+    	// Switch case for use mode
+		if (args != null && args.length != 0 && args[0] != "") {
+			int stateOfCase = Integer.parseInt(args[0]);
+			switch (stateOfCase) {
+			case 0:
+				break;
+			case 1:
+				if (args[1] != null) {
+					filename = args[1];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. File name requested, but no file name available.");
+				}
+				break;
+			case 2:
+				if (args[1] != null && args[2] != null) {
+					startVertex = args[1];
+					destinationVertex = args[2];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. Start and destination vertex requested, but no vertex available.");
+				}
+				break;
+			case 3:
+				if (args[1] != null) {
+					filename = args[1];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. File name requested, but no file name available.");
+				}
+				if (args[2] != null && args[3] != null) {
+					startVertex = args[2];
+					destinationVertex = args[3];
+				} else {
+					throw new RuntimeException(
+							"Error during start app. Start and destination vertex requested, but no vertex available.");
+				}
+			default:
+				break;
+			}
+		}
+	}
 
 	/**
 	 * Search the way between startVertex and destination vertex using the breadth
