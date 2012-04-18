@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.jgrapht.DirectedGraph;
@@ -236,6 +238,10 @@ public class ExampleJGraphT {
 		
 		// Now check in the breadth if the destination vertex is contained in the neighbor list. We check vertex after vertex.
 		for (String vertex : neighborList) {
+			// If the actual vertex is already contained in the way to destination list we skip the processing of this vertex.
+			if (vertexWayList.contains(vertex)) {
+				break;
+			}
 			// First we add the actual vertex to the way to destination.
 			vertexWayList.add(vertex);
 			// Now we display the actual state of the way to destination.
@@ -348,6 +354,8 @@ public class ExampleJGraphT {
 			return;
 		}
 		//showNeighborListForVertex(startVertex, neighborList);
+		
+		Collections.shuffle(neighborList);
 		
 		// Now keep on working for all vertex in the list.
 		for (String vertex : neighborList) {
