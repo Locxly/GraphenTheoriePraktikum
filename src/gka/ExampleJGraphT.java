@@ -115,6 +115,14 @@ public class ExampleJGraphT {
         		System.err.println("Finalize breadth first search after exception.");
         	}
         	
+        	// Now using the floyd warshall algorithm.
+        	FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(createdGraph);
+        	algorithmFW.calculate(startVertex, destinationVertex);
+        	
+        	// Now using the dijkstra algorithm.
+        	DijkstraAlgorithm algorithmD = new DijkstraAlgorithm(createdGraph);
+        	algorithmD.calculate(startVertex, destinationVertex);
+        	
         } else {
         	// Could not create graph.
         	throw new RuntimeException("Error. Could not create valid error.");
