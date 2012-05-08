@@ -4,6 +4,8 @@
 package gka;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
@@ -35,7 +37,21 @@ public class FlyodWarshallAlgorithm {
 	 * @param destinationVertex
 	 */
 	public void calculate(String startVertex, String destinationVertex) {
-		;
+		// Reference implementation to compare the result
+		floydWarshallJGraphT(startVertex, destinationVertex);
+	}
+
+	/**
+	 * The implementation of the floyd warshall algorithm which is included in jGraphT
+	 * 
+	 * @param startVertex
+	 * @param destinationVertex
+	 */
+	private void floydWarshallJGraphT(String startVertex,
+			String destinationVertex) {
+		FloydWarshallShortestPaths<String, DefaultWeightedEdge> floydWarshall = new FloydWarshallShortestPaths<String, DefaultWeightedEdge>(graph);
+		GraphPath<String, DefaultWeightedEdge> shortestPath = floydWarshall.getShortestPath(startVertex, destinationVertex);
+		System.out.println("Shortest Path is [" + shortestPath.toString() + "]");
 	}
 
 }

@@ -101,27 +101,27 @@ public class ExampleJGraphT {
 			}
         	System.out.println("Search the way between [" + startVertex + "] and [" + destinationVertex + "].");
         	
-        	// First via depth first search.
-        	try {
-        		depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
-        	} catch (Exception e) {
-        		System.err.println("Finalize depth first search after exception.");
-        	}
-        	
-        	// Now via breadth first search
-        	try {
-        		breadthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
-        	} catch (Exception e) {
-        		System.err.println("Finalize breadth first search after exception.");
-        	}
-        	
+//        	// First via depth first search.
+//        	try {
+//        		depthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+//        	} catch (Exception e) {
+//        		System.err.println("Finalize depth first search after exception.");
+//        	}
+//        	
+//        	// Now via breadth first search
+//        	try {
+//        		breadthFirstSearchForVertex(createdGraph, startVertex, destinationVertex);
+//        	} catch (Exception e) {
+//        		System.err.println("Finalize breadth first search after exception.");
+//        	}
+//        	
         	// Now using the floyd warshall algorithm.
         	FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(createdGraph);
         	algorithmFW.calculate(startVertex, destinationVertex);
         	
-        	// Now using the dijkstra algorithm.
-        	DijkstraAlgorithm algorithmD = new DijkstraAlgorithm(createdGraph);
-        	algorithmD.calculate(startVertex, destinationVertex);
+//        	// Now using the dijkstra algorithm.
+//        	DijkstraAlgorithm algorithmD = new DijkstraAlgorithm(createdGraph);
+//        	algorithmD.calculate(startVertex, destinationVertex);
         	
         } else {
         	// Could not create graph.
