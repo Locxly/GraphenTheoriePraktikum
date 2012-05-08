@@ -38,7 +38,12 @@ public class FlyodWarshallAlgorithm {
 	 */
 	public void calculate(String startVertex, String destinationVertex) {
 		// Reference implementation to compare the result
-		floydWarshallJGraphT(startVertex, destinationVertex);
+		//floydWarshallJGraphT(startVertex, destinationVertex);
+		
+		// Using a different algorithm
+		FloydWarshallImpl<String, DefaultWeightedEdge> floydWarshall = new FloydWarshallImpl<String, DefaultWeightedEdge>(graph);
+		GraphPath<String, DefaultWeightedEdge> shortestPath = floydWarshall.calculateMinPath(startVertex, destinationVertex);
+		System.out.println("Shortest Path is [" + shortestPath.toString() + "]");
 	}
 
 	/**

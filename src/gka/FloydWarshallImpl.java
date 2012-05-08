@@ -3,101 +3,197 @@
  */
 package gka;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.graph.GraphPathImpl;
+import org.jgrapht.util.VertexPair;
 
 /**
+ * The implementation is based on the implementation of jGraphT. The main
+ * methods are simplified and also renamed because of better readable names.
+ * 
  * @author hoelschers
- * @param <V>
- * @param <E>
- *
+ * 
  */
 public class FloydWarshallImpl<V, E> {
-	//~ Instance fields --------------------------------------------------------
-
-    int nextIndex = 0;
-    HashMap<V, Integer> indices;
-
-    double [][] d;
-
-    double diameter;
-
-    //~ Constructors -----------------------------------------------------------
-
+	private Graph<V, E> graph;
+    private List<V> vertexSet;
+    private double diameter = 0.0;
+    private double [][] adjacencyArray = null;
+    private int [][] shortPathArray = null;
+    private Map<VertexPair<V>, GraphPath<V, E>> shortestPathMap = null;
+ 
     /**
-     * Constructs the shortest path array for the given graph.
-     *
-     * @param g input graph
+     * The constructor initializes the adjacency array and the vertex set.
+     * 
+     * @param graph
      */
-    public FloydWarshallImpl(Graph<V, E> g)
-    {
-        int sz = g.vertexSet().size();
-        d = new double[sz][sz];
-        indices = new HashMap<V, Integer>();
+    public FloydWarshallImpl(Graph<V, E> graph) {
+        this.graph = graph;
+        this.vertexSet = new ArrayList<V>(graph.vertexSet());
+        
+        initalizeMatrix(graph);
+        
+		Map<VertexPair<V>, GraphPath<V, E>> shortPaths = new HashMap<VertexPair<V>, GraphPath<V, E>>();
 
-        //Initialise distance to infinity, or the neighbours weight, or 0 if
-        //same
-        for (V v1 : g.vertexSet()) {
-            for (V v2 : g.vertexSet()) {
-                if (v1 == v2) {
-                    d[index(v1)][index(v2)] = 0;
-                } else {
-                    E e = g.getEdge(v1, v2);
+		for (int i = 0; i < vertexSet.size(); i++) {
+			for (int j = 0; j < vertexSet.size(); j++) {
+				if (i == j) {
+					continue;
+				}
 
-                    if (e == null) {
-                        d[index(v1)][index(v2)] = Double.POSITIVE_INFINITY;
-                    } else {
-                        d[index(v1)][index(v2)] = g.getEdgeWeight(e);
+				V vertexA = vertexSet.get(i);
+				V vertexB = vertexSet.get(j);
+
+				GraphPath<V, E> path = calculateMinPath(vertexA, vertexB);
+
+				// we got a path
+				if (path != null) {
+					shortPaths.put(new VertexPair<V>(vertexA, vertexB), path);
+				}
+			}
+		}
+
+		this.shortestPathMap = shortPaths;
+    }
+
+	/**
+	 * Initialize the floy warshall matrix
+	 * 
+	 * @param graph
+	 */
+	private void initalizeMatrix(Graph<V, E> graph) {
+		int n = vertexSet.size();
+        
+        // init the backtrace matrix
+        shortPathArray = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(shortPathArray[i], -1);
+        }
+ 
+        // initialize matrix, 0
+        adjacencyArray = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(adjacencyArray[i], Double.POSITIVE_INFINITY);
+        }
+ 
+        // initialize matrix, 1
+        for (int i = 0; i < n; i++) {
+            adjacencyArray[i][i] = 0.0;
+        }
+ 
+        // initialize matrix, 2
+        Set<E> edges = graph.edgeSet();
+        for (E edge : edges) {
+            V v1 = graph.getEdgeSource(edge);
+            V v2 = graph.getEdgeTarget(edge);
+ 
+            int v_1 = vertexSet.indexOf(v1);
+            int v_2 = vertexSet.indexOf(v2);
+ 
+            adjacencyArray[v_1][v_2] = graph.getEdgeWeight(edge);
+            if (!(graph instanceof DirectedGraph<?, ?>)) {
+                adjacencyArray[v_2][v_1] = graph.getEdgeWeight(edge);
+            }
+        }
+        
+        // initialize matrix, 3
+        // run fw alg
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    double ik_kj = adjacencyArray[i][k] + adjacencyArray[k][j];
+                    if (ik_kj < adjacencyArray[i][j]) {
+                        adjacencyArray[i][j] = ik_kj;
+                        shortPathArray[i][j] = k;
+                        diameter = (diameter > adjacencyArray[i][j]) ? diameter : adjacencyArray[i][j];
                     }
                 }
             }
         }
-
-        //now iterate k times
-        for (int k = 0; k < sz; k++) {
-            for (V v1 : g.vertexSet()) {
-                for (V v2 : g.vertexSet()) {
-                    d[index(v1)][index(v2)] =
-                        Math.min(
-                            d[index(v1)][index(v2)],
-                            d[index(v1)][k] + d[k][index(v2)]);
-                    diameter = Math.max(diameter, d[index(v1)][index(v2)]);
-                }
+	}
+ 
+    /**
+     * Get the length of a shortest path.
+     *
+     * @param vertexA first vertex
+     * @param vertexB second vertex
+     *
+     * @return shortest distance between a and b
+     */
+    public double shortestDistance(V vertexA, V vertexB) { 
+        return adjacencyArray[vertexSet.indexOf(vertexA)][vertexSet.indexOf(vertexB)];
+    }
+ 
+    /**
+     * Recursive method for the search of path between given vertexes.
+     *  
+     * @param edges all edges will be saved for the back track
+     * @param indexVertexA the first vertex
+     * @param indexVertexB the second vertex
+     */
+    private void recursivePathTrac(List<E> edges, int indexVertexA, int indexVertexB) {
+        int indexSubsequentVertex = shortPathArray[indexVertexA][indexVertexB];
+        if (indexSubsequentVertex == -1) {
+            E edge = graph.getEdge(vertexSet.get(indexVertexA), vertexSet.get(indexVertexB));
+            if (edge != null) {
+                edges.add(edge);
+            }
+        } else {
+            recursivePathTrac(edges, indexVertexA, indexSubsequentVertex);
+            recursivePathTrac(edges, indexSubsequentVertex, indexVertexB);
+        }
+    }
+ 
+    /**
+     * Calculates the shortest path between two given vertexes.
+     *
+     * @param startVertex start vertex
+     * @param destinationVertex destination vertex
+     *
+     * @return the shorted path between the vertexes. If no path exists null.
+     */ 
+    public GraphPath<V, E> calculateMinPath(V startVertex, V destinationVertex) {
+        int indexStartVertex = vertexSet.indexOf(startVertex);
+        int indexDestinationVertex = vertexSet.indexOf(destinationVertex);
+ 
+        List<E> edges = new ArrayList<E>();
+        recursivePathTrac(edges, indexStartVertex, indexDestinationVertex);
+ 
+        // no path, return null
+        if (edges.size() < 1) {
+            return null;
+        }
+ 
+		GraphPathImpl<V, E> path = new GraphPathImpl<V, E>(graph, startVertex,
+				destinationVertex, edges, edges.size());
+ 
+        return path;
+    }
+ 
+    /**
+     * Search in path map for all known paths from a given vertex.
+     *
+     * @param vertex the vertex
+     *
+     * @return all known paths with vertex
+     */
+    public List<GraphPath<V, E>> getShortestPaths(V vertex) {
+        List<GraphPath<V, E>> found = new ArrayList<GraphPath<V, E>>();
+        for (VertexPair<V> pair : shortestPathMap.keySet()) {
+            if (pair.hasVertex(vertex)) {
+                found.add(shortestPathMap.get(pair));
             }
         }
-    }
-
-    //~ Methods ----------------------------------------------------------------
-
-    /**
-     * Retrieves the shortest distance between two vertices.
-     *
-     * @param v1 first vertex
-     * @param v2 second vertex
-     *
-     * @return distance, or positive infinity if no path
-     */
-    public double shortestDistance(V v1, V v2)
-    {
-        return d[index(v1)][index(v2)];
-    }
-
-    /**
-     * @return diameter computed for the graph
-     */
-    public double getDiameter()
-    {
-        return diameter;
-    }
-
-    private int index(V vertex)
-    {
-        Integer index = indices.get(vertex);
-        if (index == null) {
-            indices.put(vertex, nextIndex);
-            index = nextIndex++;
-        }
-        return index;
+ 
+        return found;
     }
 }
