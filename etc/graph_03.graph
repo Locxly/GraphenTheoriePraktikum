@@ -1,0 +1,10 @@
+#gerichtet
+s,u,10
+s,x,5
+u,v,1
+u,x,2
+x,u,3
+x,y,2
+y,s,7
+y,v,6
+v,y,4
