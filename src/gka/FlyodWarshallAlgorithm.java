@@ -19,14 +19,14 @@ public class FlyodWarshallAlgorithm {
 	/**
 	 * The graph to work with.
 	 */
-	private Graph<Vertex, DefaultWeightedEdge> graph;
+	private Graph<String, DefaultWeightedEdge> graph;
 
 	/**
 	 * The constructor.
 	 * 
 	 * @param createdGraph
 	 */
-	public FlyodWarshallAlgorithm(Graph<Vertex, DefaultWeightedEdge> createdGraph) {
+	public FlyodWarshallAlgorithm(Graph<String, DefaultWeightedEdge> createdGraph) {
 		this.graph = createdGraph;
 	}
 	
@@ -36,14 +36,18 @@ public class FlyodWarshallAlgorithm {
 	 * @param startVertex
 	 * @param destinationVertex
 	 */
-	public void calculate(Vertex startVertex, Vertex destinationVertex) {
+	public void calculate(String startVertex, String destinationVertex) {
 		// Reference implementation to compare the result
 		//floydWarshallJGraphT(startVertex, destinationVertex);
 		
 		// Using a different algorithm
-		FloydWarshallImpl<Vertex, DefaultWeightedEdge> floydWarshall = new FloydWarshallImpl<Vertex, DefaultWeightedEdge>(graph);
-		GraphPath<Vertex, DefaultWeightedEdge> shortestPath = floydWarshall.calculateMinPath(startVertex, destinationVertex);
-		System.out.println("Shortest Path is [" + shortestPath.toString() + "]");
+		FloydWarshallImpl<String, DefaultWeightedEdge> floydWarshall = new FloydWarshallImpl<String, DefaultWeightedEdge>(graph);
+		GraphPath<String, DefaultWeightedEdge> shortestPath = floydWarshall.calculateMinPath(startVertex, destinationVertex);
+		if (shortestPath != null) {
+			System.out.println("Shortest Path is [" + shortestPath.toString() + "]");
+		} else {
+			System.out.println("No path found.");
+		}
 	}
 
 	/**
@@ -52,10 +56,10 @@ public class FlyodWarshallAlgorithm {
 	 * @param startVertex
 	 * @param destinationVertex
 	 */
-	private void floydWarshallJGraphT(Vertex startVertex,
-			Vertex destinationVertex) {
-		FloydWarshallShortestPaths<Vertex, DefaultWeightedEdge> floydWarshall = new FloydWarshallShortestPaths<Vertex, DefaultWeightedEdge>(graph);
-		GraphPath<Vertex, DefaultWeightedEdge> shortestPath = floydWarshall.getShortestPath(startVertex, destinationVertex);
+	private void floydWarshallJGraphT(String startVertex,
+			String destinationVertex) {
+		FloydWarshallShortestPaths<String, DefaultWeightedEdge> floydWarshall = new FloydWarshallShortestPaths<String, DefaultWeightedEdge>(graph);
+		GraphPath<String, DefaultWeightedEdge> shortestPath = floydWarshall.getShortestPath(startVertex, destinationVertex);
 		System.out.println("Shortest Path is [" + shortestPath.toString() + "]");
 	}
 

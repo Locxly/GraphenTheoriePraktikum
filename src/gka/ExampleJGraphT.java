@@ -25,19 +25,6 @@ import org.jgrapht.graph.SimpleGraph;
  * 
  * Team 6: Stephan Hölscher, Milena Dreier
  * 
- * Aufgabenaufteilung: Gemeinsame Bearbeitung der gesamten Aufgabe Verwendung
- * von Saros zur gemeinsamen Entwicklung
- * 
- * Quellenangaben: https://github.com/jgrapht/jgrapht/wiki/HelloWorld
- * http://jgrapht.org/javadoc/ Christoph Klauck, Christoph Mass: Graphentheorie
- * für Studierende der Informatik, 4. Auflage.
- * 
- * Bearbeitungszeitraum: Start am 04.04.2012, Fertigstellung am 17.04.2012
- * tägliche Bearbeitung (Ausnahme Ostern) von ca. 1 Stunde
- * 
- * Aktueller Stand: fertig :) eventuell Änderungen am Programmier-Stil und zur
- * Optimierung nötig
- * 
  * @author hoelschers, dreierm
  * 
  */
@@ -47,12 +34,12 @@ public class ExampleJGraphT {
 
 	private static boolean breadthFirstFinish = false;
 
-	private static List<Vertex> vertexWayList;
+	private static List<String> vertexWayList;
 
 	// Initialize the runtime attributes in default state
 	private static String filename = GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION;
-	private static Vertex startVertex = null;
-	private static Vertex destinationVertex = null;
+	private static String startVertex = null;
+	private static String destinationVertex = null;
 
 	// ~ Constructors ----------------------------------------------------------
 	private ExampleJGraphT() {
@@ -72,7 +59,7 @@ public class ExampleJGraphT {
 
 		startUpProcedure(args);
 
-		Graph<Vertex, DefaultWeightedEdge> createdGraph = null;
+		Graph<String, DefaultWeightedEdge> createdGraph = null;
 
 		// Create the graph.
 		try {
@@ -120,14 +107,12 @@ public class ExampleJGraphT {
 			// }
 			//
 			// Now using the floyd warshall algorithm.
-			FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(
-					createdGraph);
-			algorithmFW.calculate(startVertex, destinationVertex);
+//			FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(
+//					createdGraph);
+//			algorithmFW.calculate(startVertex, destinationVertex);
 
 			// // Now using the dijkstra algorithm.
-			// DijkstraAlgorithm algorithmD = new
-			// DijkstraAlgorithm(createdGraph);
-			// algorithmD.calculate(startVertex, destinationVertex);
+			 DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
 
 		} else {
 			// Could not create graph.
@@ -177,10 +162,8 @@ public class ExampleJGraphT {
 			case 2:
 				filename = "graph_01.graph";
 				if (args[1] != null && args[2] != null) {
-					Vertex start = new Vertex(args[1]);
-					startVertex = start;
-					Vertex dest = new Vertex(args[2]);
-					destinationVertex = dest;
+					startVertex = args[1];
+					destinationVertex = args[2];
 				} else {
 					throw new RuntimeException(
 							"Error during start app. Start and destination vertex requested, but no vertex available.");
@@ -194,10 +177,8 @@ public class ExampleJGraphT {
 							"Error during start app. File name requested, but no file name available.");
 				}
 				if (args[2] != null && args[3] != null) {
-					Vertex start = new Vertex(args[2]);
-					startVertex = start;
-					Vertex dest = new Vertex(args[3]);
-					destinationVertex = dest;
+					startVertex = args[2];
+					destinationVertex = args[3];
 				} else {
 					throw new RuntimeException(
 							"Error during start app. Start and destination vertex requested, but no vertex available.");
@@ -220,8 +201,8 @@ public class ExampleJGraphT {
 	 *            the destination vertex
 	 */
 	private static void breadthFirstSearchForVertex(
-			Graph<Vertex, DefaultWeightedEdge> createdGraph,
-			Vertex startVertex, Vertex destinationVertex) {
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex) {
 		System.out.println("Using breadth first search.");
 
 		// First check if start and destination vertex are equal.
@@ -233,14 +214,14 @@ public class ExampleJGraphT {
 		}
 
 		// Initialize the way to destination list.
-		vertexWayList = new ArrayList<Vertex>();
+		vertexWayList = new ArrayList<String>();
 
 		// Add the start vertex to way to destination list.
 		vertexWayList.add(startVertex);
 
 		// Now we make several recursive depth first steps.
 		recursiveBreadthFirstStep(createdGraph, startVertex, destinationVertex,
-				new Vertex(""));
+				"");
 
 		// Display the final way to destination.
 		displayFinalWayToVertex();
@@ -259,13 +240,13 @@ public class ExampleJGraphT {
 	 *            the predecessor vertex
 	 */
 	private static void recursiveBreadthFirstStep(
-			Graph<Vertex, DefaultWeightedEdge> createdGraph,
-			Vertex workingVertex, Vertex destinationVertex,
-			Vertex predecessorVertex) {
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String workingVertex, String destinationVertex,
+			String predecessorVertex) {
 
 		// Calculate the neighbor list for the actual vertex. Keep in mind that
 		// the predecessor vertex is also contained in this list.
-		List<Vertex> neighborList = Graphs.neighborListOf(createdGraph,
+		List<String> neighborList = Graphs.neighborListOf(createdGraph,
 				workingVertex);
 
 		// Check if the neighbor list only contains the predecessor as neighbor.
@@ -284,7 +265,7 @@ public class ExampleJGraphT {
 
 		// Now check in the breadth if the destination vertex is contained in
 		// the neighbor list. We check vertex after vertex.
-		for (Vertex vertex : neighborList) {
+		for (String vertex : neighborList) {
 			// If the actual vertex is already contained in the way to
 			// destination list we skip the processing of this vertex.
 			if (vertexWayList.contains(vertex)) {
@@ -310,7 +291,7 @@ public class ExampleJGraphT {
 
 		// After the complete breadth search we start to process the vertex for
 		// subsequent search.
-		for (Vertex vertex : neighborList) {
+		for (String vertex : neighborList) {
 			// If vertex is the predecessor we will skip it.
 			if (vertex.equals(predecessorVertex)) {
 				System.out.println("Skip vertex [" + vertex
@@ -349,7 +330,7 @@ public class ExampleJGraphT {
 	 * @param vertex
 	 *            the last element of this vertex shall be deleted.
 	 */
-	private static void removeLastVertexFromWayToVertex(Vertex vertex) {
+	private static void removeLastVertexFromWayToVertex(String vertex) {
 		vertexWayList.remove(vertexWayList.lastIndexOf(vertex));
 	}
 
@@ -365,8 +346,8 @@ public class ExampleJGraphT {
 	 *            the destination vertex
 	 */
 	private static void depthFirstSearchForVertex(
-			Graph<Vertex, DefaultWeightedEdge> createdGraph,
-			Vertex startVertex, Vertex destinationVertex) {
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String startVertex, String destinationVertex) {
 		System.out.println("Using depth first search.");
 
 		// First check if start and destination vertex are equal.
@@ -378,14 +359,14 @@ public class ExampleJGraphT {
 		}
 
 		// Initialize the way to destination list.
-		vertexWayList = new ArrayList<Vertex>();
+		vertexWayList = new ArrayList<String>();
 
 		// Add the start vertex to way to destination list.
 		vertexWayList.add(startVertex);
 
 		// Now we make several recursive depth first steps.
 		recursiveDepthFirstStep(createdGraph, startVertex, destinationVertex,
-				new Vertex(""));
+				"");
 
 		// Display the final way to destination.
 		displayFinalWayToVertex();
@@ -404,15 +385,15 @@ public class ExampleJGraphT {
 	 *            the predecessor vertex
 	 */
 	private static void recursiveDepthFirstStep(
-			Graph<Vertex, DefaultWeightedEdge> createdGraph,
-			Vertex workingVertex, Vertex destinationVertex,
-			Vertex predecessorVertex) {
+			Graph<String, DefaultWeightedEdge> createdGraph,
+			String workingVertex, String destinationVertex,
+			String predecessorVertex) {
 		// Display the actual state of the way to destination list.
 		displayFinalWayToVertex();
 
 		// Calculate the neighbor list for the actual vertex. Keep in mind that
 		// the predecessor vertex is also contained in this list.
-		List<Vertex> neighborList = Graphs.neighborListOf(createdGraph,
+		List<String> neighborList = Graphs.neighborListOf(createdGraph,
 				workingVertex);
 
 		// If neighbor list is empty we skip the work flow for this vertex. Keep
@@ -426,7 +407,7 @@ public class ExampleJGraphT {
 		Collections.shuffle(neighborList);
 
 		// Now keep on working for all vertex in the list.
-		for (Vertex vertex : neighborList) {
+		for (String vertex : neighborList) {
 			// If destination vertex still found skip the work flow and return
 			// to caller. We should get back to primary recursive start.
 			if (depthFirstFinish) {
@@ -485,7 +466,7 @@ public class ExampleJGraphT {
 	private static void displayFinalWayToVertex() {
 		System.out.print("Way from start vertex to destination vertex was : [");
 		int count = 1;
-		for (Vertex vertex : vertexWayList) {
+		for (String vertex : vertexWayList) {
 			if (count < vertexWayList.size()) {
 				System.out.print("{" + vertex + "} -> ");
 				count++;

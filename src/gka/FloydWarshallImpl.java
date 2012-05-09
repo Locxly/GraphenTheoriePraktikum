@@ -92,6 +92,8 @@ public class FloydWarshallImpl<V, E> {
                 adjacencyArray[v_2][v_1] = graph.getEdgeWeight(edge);
             }
         }
+        System.out.println("Write matrix.");
+        writeMatrix(n);
         
         // Initialisieren der Ajadenzmatrix. Jetzt findet der eigentlich 
         // Floyd-Warsgall-Alg. statt.
@@ -102,14 +104,37 @@ public class FloydWarshallImpl<V, E> {
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    double ik_kj = adjacencyArray[i][k] + adjacencyArray[k][j];
-                    if (ik_kj < adjacencyArray[i][j]) {
-                        adjacencyArray[i][j] = ik_kj;
-                        shortPathArray[i][j] = k;
-                    }
+                	if (i != k && j != k) {
+						double ik_kj = adjacencyArray[i][k]
+								+ adjacencyArray[k][j];
+						if (ik_kj < adjacencyArray[i][j]) {
+							adjacencyArray[i][j] = ik_kj;
+							shortPathArray[i][j] = k;
+						}
+                	}
                 }
             }
         }
+        System.out.println("Write matrix.");
+        writeMatrix(n);
+	}
+
+	/**
+	 * @param n
+	 */
+	private void writeMatrix(int n) {
+		// Ausgabe der Adjadenzmatrix.
+        for (int i = 0; i < n; i++) {
+        	for (int j = 0; j < n; j++) {
+        		if (Double.POSITIVE_INFINITY == adjacencyArray[i][j]) {
+        			System.out.print("[I]|");
+        		} else {
+        			System.out.print("[" + adjacencyArray[i][j] + "]|");
+        		}
+        	}
+        	System.out.println("");
+        }
+        System.out.println("");
 	}
  
     /**

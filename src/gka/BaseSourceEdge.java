@@ -11,31 +11,31 @@ package gka;
  */
 public class BaseSourceEdge {
 	
-	private Vertex vertexFrom;
-	private Vertex vertexTo;
+	private String vertexFrom;
+	private String vertexTo;
 	private Long edgeWeight;
 	/**
 	 * @return the vertexFrom
 	 */
-	public Vertex getVertexFrom() {
+	public String getVertexFrom() {
 		return vertexFrom;
 	}
 	/**
 	 * @param vertexFrom the vertexFrom to set
 	 */
-	public void setVertexFrom(Vertex vertexFrom) {
+	public void setVertexFrom(String vertexFrom) {
 		this.vertexFrom = vertexFrom;
 	}
 	/**
 	 * @return the vertexTo
 	 */
-	public Vertex getVertexTo() {
+	public String getVertexTo() {
 		return vertexTo;
 	}
 	/**
 	 * @param vertexTo the vertexTo to set
 	 */
-	public void setVertexTo(Vertex vertexTo) {
+	public void setVertexTo(String vertexTo) {
 		this.vertexTo = vertexTo;
 	}
 	/**
