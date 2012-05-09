@@ -5,31 +5,33 @@ package gka;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.GraphPathImpl;
-import org.jgrapht.util.VertexPair;
 
 /**
  * The implementation is based on the implementation of jGraphT. The main
  * methods are simplified and also renamed because of better readable names.
+ * Also I deleted a lot of unused stuff for our implementation.
  * 
  * @author hoelschers
  * 
  */
 public class FloydWarshallImpl<V, E> {
+	
+	// Der Graph zum Bearbeiten.
 	private Graph<V, E> graph;
+	// Die Menge der Knoten im Graph.
     private List<V> vertexSet;
-    private double diameter = 0.0;
+    // Die Adjadenzmatrix.
     private double [][] adjacencyArray = null;
+    // Die Matrix mit den kürzesten Pfaden zwischen den Knoten.
     private int [][] shortPathArray = null;
-    private Map<VertexPair<V>, GraphPath<V, E>> shortestPathMap = null;
+
  
     /**
      * The constructor initializes the adjacency array and the vertex set.
@@ -37,32 +39,13 @@ public class FloydWarshallImpl<V, E> {
      * @param graph
      */
     public FloydWarshallImpl(Graph<V, E> graph) {
+    	// Setze den Graph.
         this.graph = graph;
+        // Hole die Menge aller Knoten im Graph.
         this.vertexSet = new ArrayList<V>(graph.vertexSet());
-        
+        // Initialisiere die FW-Matrix.
         initalizeMatrix(graph);
         
-		Map<VertexPair<V>, GraphPath<V, E>> shortPaths = new HashMap<VertexPair<V>, GraphPath<V, E>>();
-
-		for (int i = 0; i < vertexSet.size(); i++) {
-			for (int j = 0; j < vertexSet.size(); j++) {
-				if (i == j) {
-					continue;
-				}
-
-				V vertexA = vertexSet.get(i);
-				V vertexB = vertexSet.get(j);
-
-				GraphPath<V, E> path = calculateMinPath(vertexA, vertexB);
-
-				// we got a path
-				if (path != null) {
-					shortPaths.put(new VertexPair<V>(vertexA, vertexB), path);
-				}
-			}
-		}
-
-		this.shortestPathMap = shortPaths;
     }
 
 	/**
@@ -73,24 +56,29 @@ public class FloydWarshallImpl<V, E> {
 	private void initalizeMatrix(Graph<V, E> graph) {
 		int n = vertexSet.size();
         
-        // init the backtrace matrix
+        // Initialisieren des shortPathArray mit -1.
+		// D.h. im Moment ist immer der direkte Weg zwischen zwei Knoten der kürzeste
         shortPathArray = new int[n][n];
         for (int i = 0; i < n; i++) {
             Arrays.fill(shortPathArray[i], -1);
         }
  
-        // initialize matrix, 0
+        // Initialisieren der Ajadenzmatrix. Alle Werte werden auf unendlich gesetzt.
         adjacencyArray = new double[n][n];
         for (int i = 0; i < n; i++) {
             Arrays.fill(adjacencyArray[i], Double.POSITIVE_INFINITY);
         }
  
-        // initialize matrix, 1
+        // Initialisieren der Ajadenzmatrix. Die Mitteldiagonale (die Vertex 
+        // verbinden sich hier selbst) wird initialisiert. Der Wert ist per 
+        // Definition 0.
         for (int i = 0; i < n; i++) {
             adjacencyArray[i][i] = 0.0;
         }
  
-        // initialize matrix, 2
+        // Initialisieren der Ajadenzmatrix. Eintragen der Kantengewichte 
+        // bei Kanten zwischen den Knoten. Ist der Graph ungerichtet, wird 
+        // für das Reziproke der selbe Wert eingetragen.
         Set<E> edges = graph.edgeSet();
         for (E edge : edges) {
             V v1 = graph.getEdgeSource(edge);
@@ -105,8 +93,12 @@ public class FloydWarshallImpl<V, E> {
             }
         }
         
-        // initialize matrix, 3
-        // run fw alg
+        // Initialisieren der Ajadenzmatrix. Jetzt findet der eigentlich 
+        // Floyd-Warsgall-Alg. statt.
+        // Für jede Knotenverbindung i nach j wird überprüft, ob es einen Knoten 
+        // k gibt, über den die Verbindung 'kürzer' ist. Ist dies der Fall, so 
+        // wird der Wert in der Adjadenzmatrix gespeichert und der Knoten wird 
+        // als Verbindung in die ShortestPathMatrix gespeichert.
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -114,24 +106,11 @@ public class FloydWarshallImpl<V, E> {
                     if (ik_kj < adjacencyArray[i][j]) {
                         adjacencyArray[i][j] = ik_kj;
                         shortPathArray[i][j] = k;
-                        diameter = (diameter > adjacencyArray[i][j]) ? diameter : adjacencyArray[i][j];
                     }
                 }
             }
         }
 	}
- 
-    /**
-     * Get the length of a shortest path.
-     *
-     * @param vertexA first vertex
-     * @param vertexB second vertex
-     *
-     * @return shortest distance between a and b
-     */
-    public double shortestDistance(V vertexA, V vertexB) { 
-        return adjacencyArray[vertexSet.indexOf(vertexA)][vertexSet.indexOf(vertexB)];
-    }
  
     /**
      * Recursive method for the search of path between given vertexes.
@@ -141,13 +120,18 @@ public class FloydWarshallImpl<V, E> {
      * @param indexVertexB the second vertex
      */
     private void recursivePathTrac(List<E> edges, int indexVertexA, int indexVertexB) {
+    	// Finde einen Zwischenknoten für die Verbindung der beiden Knoten.
         int indexSubsequentVertex = shortPathArray[indexVertexA][indexVertexB];
+        // Gibt es keinen und gibt es eine Kante, nehme diese in den kürztesten Weg auf. 
+        // Ansonsten ist diese Verbindung zwischen den Knoten nicht gegeben.
         if (indexSubsequentVertex == -1) {
             E edge = graph.getEdge(vertexSet.get(indexVertexA), vertexSet.get(indexVertexB));
             if (edge != null) {
                 edges.add(edge);
             }
         } else {
+        	// Gibt es einen Zwischenknoten, führe für beide Teilstücke einen 
+        	// rekursiven Aufruf durch.
             recursivePathTrac(edges, indexVertexA, indexSubsequentVertex);
             recursivePathTrac(edges, indexSubsequentVertex, indexVertexB);
         }
@@ -162,38 +146,23 @@ public class FloydWarshallImpl<V, E> {
      * @return the shorted path between the vertexes. If no path exists null.
      */ 
     public GraphPath<V, E> calculateMinPath(V startVertex, V destinationVertex) {
-        int indexStartVertex = vertexSet.indexOf(startVertex);
+        // Finde die Indizees für die übergebenen Vertexe
+    	int indexStartVertex = vertexSet.indexOf(startVertex);
         int indexDestinationVertex = vertexSet.indexOf(destinationVertex);
  
+        // Finde rekursiv die kürzeste Verbindung zwischen den beiden Knoten.
         List<E> edges = new ArrayList<E>();
         recursivePathTrac(edges, indexStartVertex, indexDestinationVertex);
  
-        // no path, return null
+        // Gibt es keine, gib null zurück.
         if (edges.size() < 1) {
             return null;
         }
  
+        // Baue den Pfad auf und gebe ihn zurück.
 		GraphPathImpl<V, E> path = new GraphPathImpl<V, E>(graph, startVertex,
 				destinationVertex, edges, edges.size());
- 
         return path;
     }
  
-    /**
-     * Search in path map for all known paths from a given vertex.
-     *
-     * @param vertex the vertex
-     *
-     * @return all known paths with vertex
-     */
-    public List<GraphPath<V, E>> getShortestPaths(V vertex) {
-        List<GraphPath<V, E>> found = new ArrayList<GraphPath<V, E>>();
-        for (VertexPair<V> pair : shortestPathMap.keySet()) {
-            if (pair.hasVertex(vertex)) {
-                found.add(shortestPathMap.get(pair));
-            }
-        }
- 
-        return found;
-    }
 }
