@@ -27,7 +27,7 @@ import org.jgrapht.graph.WeightedMultigraph;
  */
 public class GKAGraphUtils {
 
-	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_04.graph";
+	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_03.graph";
 	// public static final String DEFAULT_GRAPH_FILE_LOCATION =
 	// "/Users/milena/Desktop/GKA/graph_01.graph";
 

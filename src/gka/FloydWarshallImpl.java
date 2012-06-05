@@ -96,7 +96,7 @@ public class FloydWarshallImpl<V, E> {
         writeMatrix(n);
         
         // Initialisieren der Ajadenzmatrix. Jetzt findet der eigentlich 
-        // Floyd-Warsgall-Alg. statt.
+        // Floyd-Warshall-Alg. statt.
         // Für jede Knotenverbindung i nach j wird überprüft, ob es einen Knoten 
         // k gibt, über den die Verbindung 'kürzer' ist. Ist dies der Fall, so 
         // wird der Wert in der Adjadenzmatrix gespeichert und der Knoten wird 
@@ -105,8 +105,7 @@ public class FloydWarshallImpl<V, E> {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                 	if (i != k && j != k) {
-						double ik_kj = adjacencyArray[i][k]
-								+ adjacencyArray[k][j];
+						double ik_kj = adjacencyArray[i][k]	+ adjacencyArray[k][j];
 						if (ik_kj < adjacencyArray[i][j]) {
 							adjacencyArray[i][j] = ik_kj;
 							shortPathArray[i][j] = k;
@@ -117,6 +116,8 @@ public class FloydWarshallImpl<V, E> {
         }
         System.out.println("Write matrix.");
         writeMatrix(n);
+        System.out.println("Write transit matrix.");
+        writeTransitMatrix(n);
 	}
 
 	/**
@@ -130,6 +131,24 @@ public class FloydWarshallImpl<V, E> {
         			System.out.print("[I]|");
         		} else {
         			System.out.print("[" + adjacencyArray[i][j] + "]|");
+        		}
+        	}
+        	System.out.println("");
+        }
+        System.out.println("");
+	}
+	
+	/**
+	 * @param n
+	 */
+	private void writeTransitMatrix(int n) {
+		// Ausgabe der Transit.
+        for (int i = 0; i < n; i++) {
+        	for (int j = 0; j < n; j++) {
+        		if (Double.POSITIVE_INFINITY == shortPathArray[i][j]) {
+        			System.out.print("[I]|");
+        		} else {
+        			System.out.print("[" + shortPathArray[i][j] + "]|");
         		}
         	}
         	System.out.println("");

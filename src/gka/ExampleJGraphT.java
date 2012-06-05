@@ -100,19 +100,22 @@ public class ExampleJGraphT {
 			//
 			// // Now via breadth first search
 			// try {
-			// breadthFirstSearchForVertex(createdGraph, startVertex,
-			// destinationVertex);
+			breadthFirstSearchForVertex(createdGraph, startVertex,
+					destinationVertex);
 			// } catch (Exception e) {
 			// System.err.println("Finalize breadth first search after exception.");
 			// }
 			//
 			// Now using the floyd warshall algorithm.
-//			FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(
-//					createdGraph);
-//			algorithmFW.calculate(startVertex, destinationVertex);
+			//FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(createdGraph);
+			//algorithmFW.calculate(startVertex, destinationVertex);
 
 			// // Now using the dijkstra algorithm.
-			 DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
+			//DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
+			
+			// Now using edmonds karp algorithm
+			EdmondsKarpAlgorithm<String, DefaultWeightedEdge> ekA = new EdmondsKarpAlgorithm<String, DefaultWeightedEdge>(createdGraph, GKAGraphUtils.setOfVertex);
+			ekA.calculate(startVertex, destinationVertex);
 
 		} else {
 			// Could not create graph.

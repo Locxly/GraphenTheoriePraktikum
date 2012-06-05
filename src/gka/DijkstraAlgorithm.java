@@ -7,10 +7,13 @@ package gka;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.GraphPathImpl;
 
@@ -38,12 +41,14 @@ public class DijkstraAlgorithm {
 	 */
 	public DijkstraAlgorithm(Graph<String, DefaultWeightedEdge> graph, String startVertex) {
 		this.graph = graph;
+		vertexID = new HashMap<String, Integer>();
 		vertexList = new ArrayList<String>(graph.vertexSet());
 		steps = 0;
 		table = new double [vertexList.size()][4];
 		for(int i = 0; i<vertexList.size(); i++)
 		{
-			vertexID.put(vertexList.get(i), i);
+			String s= vertexList.get(i);
+			vertexID.put(s, i);
 			if(vertexList.get(i).equals(startVertex))
 			{
 				table[i][0]=0.0;
@@ -77,12 +82,16 @@ public class DijkstraAlgorithm {
 			v = getMin(vertexList);
 			vertexList.remove(v);
 			table[vertexID.get(v)][2]=1;
-			
-			List<String> neighbours = Graphs.neighborListOf(graph, v);
+			List<String> neighbours;
+			if (graph instanceof DefaultDirectedWeightedGraph<?,?>) {
+				neighbours= Graphs.successorListOf((DirectedGraph<String,DefaultWeightedEdge>) graph, v); 
+			}else{
+				neighbours= Graphs.neighborListOf(graph, v);
+			}
 			
 			for (int i=0; i<neighbours.size(); i++) {
 				int neighbour=vertexID.get(neighbours.get(i));  
-				if (table[neighbour][2]!=0) {
+				if (table[neighbour][2]!=1) {
 					double dist = table[vertexID.get(v)][0] + graph.getEdgeWeight(graph.getEdge(v, neighbours.get(i)));
 					if (table[neighbour][0] > dist) {
 						steps++;
@@ -92,7 +101,7 @@ public class DijkstraAlgorithm {
 				}
 			}
 		}
-		System.out.println(table.toString());
+		System.out.println(show());
 		System.out.println("we used "+steps+" steps.");
 	}
 	
@@ -109,6 +118,27 @@ public class DijkstraAlgorithm {
 			}
 		}
 		return minS;
+	}
+	
+	
+	private String show()
+	{
+		String s = "vertexID-Liste\n";
+		Object[] keys = vertexID.keySet().toArray();
+		for(Object k:keys)
+		{
+			s += k+" "+vertexID.get(k)+" \n";
+		}
+		
+		s += "Dijkstra-Tabelle\n";
+				
+		for(int i=0; i<table.length; i++)
+		{
+			
+			s += i +" "+table[i][0]+" "+table[i][1]+" "+table[i][2]+" \n";
+		}
+		
+		return s;
 	}
 
 //	public void shortestWayTo(Vertex destinationVertex) {
