@@ -10,13 +10,13 @@ class NodeType<V, E>
     /**
 	 * 
 	 */
-	V prototype; // corresponding node in the original network
-    List<EdgeType> outgoingEdges = new ArrayList<EdgeType>(); // list of outgoing arcs
+	private V prototype; // corresponding node in the original network
+    private List<EdgeType> outgoingEdges = new ArrayList<EdgeType>(); // list of outgoing arcs
                                                    // in the residual
                                                    // network
-    boolean visited; // this mark is used during BFS to mark visited nodes
-    EdgeType lastEdge; // last arc in the shortest path
-    double flowAmount; // amount of flow, we are able to push here
+    private boolean visited; // this mark is used during BFS to mark visited nodes
+    private EdgeType lastEdge; // last arc in the shortest path
+    private double flowAmount; // amount of flow, we are able to push here
 
     NodeType(V prototype) {
 		this.prototype = prototype;
