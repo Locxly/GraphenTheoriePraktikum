@@ -15,7 +15,15 @@ class EdgeType<V, E>
     E prototype; // corresponding edge in the original network, can be null,
                  // if it is reversed arc
 
-    EdgeType( int tail,
+    public EdgeType<V, E> getReversed() {
+		return reversed;
+	}
+
+	public void setReversed(EdgeType<V, E> reversed) {
+		this.reversed = reversed;
+	}
+
+	EdgeType( int tail,
         int head,
         double capacity,
         E prototype)
