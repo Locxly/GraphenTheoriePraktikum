@@ -136,7 +136,7 @@ public final class EdmondsKarpFlowAlgorithm<V, E> {
 				maximumFlow = new HashMap<E, Double>();
 				for (int i = 0; i < numNodes; i++) {
 					for (EdgeType<V, E> currentEdge : nodesList.get(i).getOutgoingEdges()) {
-						if (currentEdge.prototype != null && currentEdge.getFlow() > 0) {
+						if (currentEdge.getPrototype() != null && currentEdge.getFlow() > 0) {
 							// Add every single edge to maximum flow map.
 							System.out.println("Add edge from ["
 									+ nodesList.get(currentEdge.getTail())
@@ -146,7 +146,7 @@ public final class EdmondsKarpFlowAlgorithm<V, E> {
 											.getPrototype().toString()
 									+ "] with flow [" + currentEdge.getFlow()
 									+ "] to list.");
-							maximumFlow.put(currentEdge.prototype, currentEdge.getFlow());
+							maximumFlow.put(currentEdge.getPrototype(), currentEdge.getFlow());
 						}
 					}
 				}
