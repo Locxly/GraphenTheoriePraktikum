@@ -10,7 +10,6 @@ class NodeType<V, E>
     /**
 	 * 
 	 */
-	private EdmondsKarpFlowAlgorithm<V, E> NodeType;
 	V prototype; // corresponding node in the original network
     List<EdgeType> outgoingEdges = new ArrayList<EdgeType>(); // list of outgoing arcs
                                                    // in the residual
@@ -19,8 +18,39 @@ class NodeType<V, E>
     EdgeType lastEdge; // last arc in the shortest path
     double flowAmount; // amount of flow, we are able to push here
 
-    NodeType(EdmondsKarpFlowAlgorithm<V, E> edmondsKarpMaximumFlow, V prototype) {
-        NodeType = edmondsKarpMaximumFlow;
+    NodeType(V prototype) {
 		this.prototype = prototype;
     }
+
+	public boolean isVisited() {
+		return visited;
+	}
+
+	public void setLastEdge(EdgeType lastEdge) {
+		this.lastEdge = lastEdge;
+	}
+
+	public void setVisited(boolean visited) {
+		this.visited = visited;
+	}
+
+	public double getFlowAmount() {
+		return flowAmount;
+	}
+
+	public void setFlowAmount(double flowAmount) {
+		this.flowAmount = flowAmount;
+	}
+
+	public V getPrototype() {
+		return prototype;
+	}
+
+	public List<EdgeType> getOutgoingEdges() {
+		return outgoingEdges;
+	}
+
+	public EdgeType getLastEdge() {
+		return lastEdge;
+	}
 }
