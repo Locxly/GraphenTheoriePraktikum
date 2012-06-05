@@ -100,8 +100,8 @@ public class ExampleJGraphT {
 			//
 			// // Now via breadth first search
 			// try {
-			breadthFirstSearchForVertex(createdGraph, startVertex,
-					destinationVertex);
+			//breadthFirstSearchForVertex(createdGraph, startVertex,
+			//		destinationVertex);
 			// } catch (Exception e) {
 			// System.err.println("Finalize breadth first search after exception.");
 			// }

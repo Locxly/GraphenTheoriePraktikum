@@ -39,12 +39,6 @@ public class EdmondsKarpAlgorithm<V, DefaultWeightedEdge> {
 	// Die Menge der Knoten im Graph.
 	private List<V> vertexSet;
 
-	private static boolean breadthFirstFinish = false;
-
-	private List<V> vertexWayList;
-	
-	private Map<DefaultWeightedEdge, Double> edgeListCapacity;
-
 	/**
 	 * The constructor.
 	 * 
@@ -71,32 +65,17 @@ public class EdmondsKarpAlgorithm<V, DefaultWeightedEdge> {
 			EdmondsKarpMaximumFlow<V, DefaultWeightedEdge> flow = new EdmondsKarpMaximumFlow<V, DefaultWeightedEdge>(
 					(DirectedGraph<V, DefaultWeightedEdge>) graph);
 			flow.calculateMaximumFlow(source, sink);
+			double originalFlow = flow.getMaximumFlowValue();
+			System.out.println("Original flow [" + originalFlow + "].");
 
-			ownAlgorithm(source, sink, null);
+			EdmondsKarpFlowAlgorithm<V, DefaultWeightedEdge> ekA = new EdmondsKarpFlowAlgorithm<V, DefaultWeightedEdge>((DirectedGraph) graph);
+			ekA.calculateMaximumFlow(source, sink);
+			double searchedFlow = ekA.getMaximumFlowValue();
+			System.out.println("Searched flow [" + searchedFlow + "].");
+			
 
 		}
 
-	}
-
-	private void ownAlgorithm(V source, V sink, V predessor) {
-		// 1. Get neighbor list of source vertex
-		List<V> neighborList = Graphs.neighborListOf(graph, source);
-		
-		// 2. Find the minimum weight edge
-		double capacityCheck = Double.POSITIVE_INFINITY;
-		
-		for (V vertex : neighborList) {
-			if (vertex.equals(predessor)) {
-				continue;
-			}
-			
-			graph.getEdge(source, vertex);
-			
-			// Check if edge already known.
-			
-			
-		}
-		
 	}
 
 }
