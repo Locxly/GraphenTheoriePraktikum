@@ -29,6 +29,8 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 	private Map<V, Integer> nodeIdMap;
 	/** Internal representation of the network. */
 	private List<NodeType<V, E>> nodesList;
+	/** Count the access to the original graph. */
+	private int steps = 0;
 
 	/**
 	 * The constructor which initializes the algorithm.
@@ -48,6 +50,13 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 		// We build the network internally from the given graph.
 		buildInternalNetwork();
 	}
+	
+	/** 
+	 * Add one step to the counter.
+	 */
+	private void increaseSteps() {
+		steps++;
+	}
 
 	/**
 	 * Build the internal network from the given graph.
@@ -55,8 +64,10 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 	private void buildInternalNetwork() {
 		// Get number of nodes.
 		numNodes = graph.vertexSet().size();
+		increaseSteps();
 		nodesList = new ArrayList<NodeType<V, E>>();
 		Iterator<V> it = graph.vertexSet().iterator();
+		increaseSteps();
 		nodeIdMap = new HashMap<V, Integer>();
 
 		// Create for every vertex a new node.
@@ -77,6 +88,7 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 			for (E e : graph.outgoingEdgesOf(we)) {
 				// Get the vertex for the target.
 				V he = graph.getEdgeTarget(e);
+				increaseSteps();
 				// Get the index of the target.
 				int j = nodeIdMap.get(he);
 				// Create a new own edge type for this direction.
@@ -91,6 +103,15 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 				nodesList.get(j).getOutgoingEdges().add(e2);
 			}
 		}
+	}
+
+	/**
+	 * Return number of accesses to the original graph.
+	 * 
+	 * @return the steps
+	 */
+	public int getSteps() {
+		return steps;
 	}
 
 	/**
