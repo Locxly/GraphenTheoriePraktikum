@@ -1,0 +1,27 @@
+/**
+ * GKA group 6
+ * 
+ * Dokumentationskopf
+ * ------------------
+ *
+ * Team 6: 					Stephan Hölscher, Milena Dreier
+ *
+ * Aufgabenaufteilung: 		Milena  Implementierung Ford-Fulkerson-Algorithmus
+ *                          Stephan Implementierung Edemond-Karp-Algorithmus
+ *                          Integration in bestehende Software durch beide unter Verwendung von GitHub
+ *
+ * Quellenangaben: 		http://jgrapht.org/javadoc/
+ *                      http://jgrapht.org/javadoc/org/jgrapht/alg/EdmondsKarpMaximumFlow.html
+ * 						Christoph Klauck, Christoph Mass: Graphentheorie f√ºr Studierende der Informatik, 4. Auflage.
+ *                      Quellcode jGraphT Implementierung Edmond-Karp (http://massapi.com/source/jgrapht-0.8.2/src/org/jgrapht/alg/EdmondsKarpMaximumFlow.java.html)
+ *                      englischer Wikipedia-Eintrag Edmond-Karp-Alg. (http://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm)
+ * 
+ * Bearbeitungszeitraum: 	Start am 30.05.2012, Fertigstellung am 06.06.2012
+ * 							tägliche Bearbeitung von 1-3 Stunden
+ *
+ * Aktueller Stand:		
+ *  			fertig
+ * 
+ * @author hoelschers, dreierm
+ * 
+ */
