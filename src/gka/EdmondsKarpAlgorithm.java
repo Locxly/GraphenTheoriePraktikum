@@ -72,6 +72,7 @@ public class EdmondsKarpAlgorithm<V, DefaultWeightedEdge> {
 			ekA.calculateMaximumFlow(source, sink);
 			double searchedFlow = ekA.getMaximumFlowValue();
 			System.out.println("Searched flow [" + searchedFlow + "].");
+			System.out.println("Accesses to the original graph [" + ekA.getSteps() + "].");
 			
 
 		}
