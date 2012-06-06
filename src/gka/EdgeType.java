@@ -1,38 +1,62 @@
 package gka;
 
-// class used for internal representation of network
-class EdgeType<V, E>
-{
-    /**
-	 * 
-	 */
-	private int tail; // "from"
-    private int head; // "to"
-    private double capacity; // capacity (can be zero)
-    private double flow; // current flow (can be negative)
-    private EdgeType<V, E> reversed; // for each arc in the original network we are to create
-                  // reversed arc
-    E prototype; // corresponding edge in the original network, can be null,
-                 // if it is reversed arc
+/**
+ * This class represents an edge. We decided to build a new class for edges
+ * because this way we can mark the capacity and flow of each edge. Also an edge
+ * has a reversed edge.
+ * 
+ * @author hoelschers, dreierm
+ * 
+ * @param <V>
+ *            Type of vertex
+ * @param <E>
+ *            Type of edge
+ */
+public class EdgeType<V, E> {
 
-    public EdgeType<V, E> getReversed() {
+	/** Index of the tail node ('from'). */
+	private int tail;
+
+	/** Index of the head node ('to'). */
+	private int head;
+
+	/** The capacity of the node => 0. */
+	private double capacity;
+
+	/** The flow of the edge <=> 0. */
+	private double flow;
+
+	/**
+	 * The reversed edge for the original edge. We need it for incoming edges
+	 * which also can have an effect on the flow.
+	 */
+	private EdgeType<V, E> reversed;
+
+	/** The original edge from the graph. Is null in case of a reversed edge. */
+	private E prototype;
+
+	/**
+	 * The constructor to set the base data.
+	 * 
+	 * @param tail
+	 * @param head
+	 * @param capacity
+	 * @param prototype
+	 */
+	public EdgeType(int tail, int head, double capacity, E prototype) {
+		this.tail = tail;
+		this.head = head;
+		this.capacity = capacity;
+		this.prototype = prototype;
+	}
+
+	public EdgeType<V, E> getReversed() {
 		return reversed;
 	}
 
 	public void setReversed(EdgeType<V, E> reversed) {
 		this.reversed = reversed;
 	}
-
-	EdgeType( int tail,
-        int head,
-        double capacity,
-        E prototype)
-    {
-		this.tail = tail;
-        this.head = head;
-        this.capacity = capacity;
-        this.prototype = prototype;
-    }
 
 	public double getCapacity() {
 		return capacity;
@@ -61,8 +85,5 @@ class EdgeType<V, E>
 	public E getPrototype() {
 		return prototype;
 	}
-    
-    
-    
-    
+
 }
