@@ -170,16 +170,17 @@ public class FundF
 	// 4
 	private void findMaxFlow()
 	{
+		
 		for (NodeType<String, DefaultWeightedEdge> n : nodes)
 		{
 			String vertex = n.getPrototype();
 			for (EdgeType<String, DefaultWeightedEdge> e : n.getOutgoingEdges())
 			{
-				e.getReversed().setFlow(0.0);
 				double flow = e.getFlow();
 				NodeType<String, DefaultWeightedEdge> lastNode = nodes.get(e.getTail());
 				if (n.isVisited() && !(lastNode.isVisited()))
 				{
+					e.getReversed().setFlow(0.0);
 					maxFlow += flow;
 					System.out.println("+" + flow + " : "
 							+ vertex + "-"
@@ -187,6 +188,7 @@ public class FundF
 				} else if (!(n.isVisited())
 						&& lastNode.isVisited())
 				{
+					e.getReversed().setFlow(0.0);
 					maxFlow -= flow;
 					if (flow < 0)
 					{
