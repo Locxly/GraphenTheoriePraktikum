@@ -185,18 +185,19 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 			int currentNode = queue.poll();
 			// Check the possibility to add amount to the flow.
 			for (EdgeType<V, E> currentEdge : nodesList.get(currentNode).getOutgoingEdges()) {
-				System.out.println("Proove if current edge from ["
-						+ nodesList.get(currentEdge.getTail()).getPrototype()
-								.toString()
-						+ "] to ["
-						+ nodesList.get(currentEdge.getHead()).getPrototype()
-								.toString() + "] with capacity ["
-						+ currentEdge.getCapacity() + "] can get flow ["
-						+ currentEdge.getFlow() + "].");
 				// If flow fits in capacity we take this edge to maximum flow list
 				if (currentEdge.getFlow() < currentEdge.getCapacity()) {
 					// But this will only happen if the head node wasn't visited.
 					if (!nodesList.get(currentEdge.getHead()).isVisited()) {
+						System.out.println("Current edge from ["
+								+ nodesList.get(currentEdge.getTail()).getPrototype()
+										.toString()
+								+ "] to ["
+								+ nodesList.get(currentEdge.getHead()).getPrototype()
+										.toString() + "] with capacity ["
+								+ currentEdge.getCapacity() + "] can get flow ["
+								+ currentEdge.getFlow() + "].");
+						
 						nodesList.get(currentEdge.getHead()).setVisited(true);
 						// Set the new maximum flow amount.
 						nodesList.get(currentEdge.getHead()).setFlowAmount(
@@ -226,9 +227,12 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 	 */
 	private void increaseFlow(int currentSink, int currentSource) {
 		// The new amount of the current flow.
+		System.out.println("The former maximum flow is [" + maximumFlowValue + "].");
 		double deltaFlow = nodesList.get(currentSink).getFlowAmount();
+		System.out.println("Add [" + deltaFlow + "] to maximum flow.");
 		// Add the current flow to the complete flow value.
 		maximumFlowValue += deltaFlow;
+		System.out.println("The new maximum flow is [" + maximumFlowValue + "].");
 		// Start the increase from the sink.
 		int currentNode = currentSink;
 		// The increase will take from sink to source. All edges between these nodes will be used.
@@ -237,9 +241,12 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 			nodesList.get(currentNode).getLastEdge().setFlow(flow);
 			System.out.println("Set the flow form [" + nodesList.get(nodesList.get(currentNode).getLastEdge().getTail()).getPrototype().toString() + "] to [" + nodesList.get(nodesList.get(currentNode).getLastEdge().getHead()).getPrototype().toString() +"] to value [" + flow + "].");
 			
+			// Decrease the flow of the reversed edge. So we consider the
+			// eventually incoming edges to the node.
 			double reversedFlow = nodesList.get(currentNode).getLastEdge().getReversed().getFlow() - deltaFlow;
 			nodesList.get(currentNode).getLastEdge().getReversed().setFlow(reversedFlow);
 
+			// Set the current node to the next node.
 			currentNode = nodesList.get(currentNode).getLastEdge().getTail();
 
 		}
