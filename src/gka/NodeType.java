@@ -30,7 +30,7 @@ class NodeType<V, E> {
     private EdgeType lastEdge; 
 
     /** The amount of flow we are able to push through this node. */
-    private double flowAmount;
+    private double flowAmount = 0.0;
     
     /**
      * The constructor.
@@ -83,5 +83,11 @@ class NodeType<V, E> {
 	{
 		lastEdge = last;
 		flowAmount = posFlow;
+	}
+	
+	public void unmark()
+	{
+		lastEdge = null;
+		flowAmount = 0.0;
 	}
 }
