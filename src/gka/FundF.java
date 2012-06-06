@@ -2,13 +2,10 @@ package gka;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Random;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 public class FundF
@@ -16,10 +13,8 @@ public class FundF
 	private DirectedGraph<String, DefaultWeightedEdge> graph;
 	private ArrayList<String> vertexList;
 	private int steps;
-	private double[][] table;
 	private HashMap<String, Integer> vertexID;
 	private String sink, source;
-	private HashMap<DefaultWeightedEdge, Double> edgeFlow;
 	private ArrayList<NodeType<String, DefaultWeightedEdge>> nodes;
 	private LinkedList<NodeType<String, DefaultWeightedEdge>> markedNodes;
 	private double maxFlow;
@@ -35,7 +30,6 @@ public class FundF
 		vertexID = new HashMap<String, Integer>();
 		vertexList = new ArrayList<String>(graph.vertexSet());
 		steps++;
-		table = new double[vertexList.size()][5];
 		markedNodes = new LinkedList<NodeType<String, DefaultWeightedEdge>>();
 		maxFlow = 0.0;
 
@@ -83,20 +77,26 @@ public class FundF
 				EdgeType<String, DefaultWeightedEdge> e1 = new EdgeType<String, DefaultWeightedEdge>(
 						j, i, graph.getEdgeWeight(e), e);
 				steps++;
-				// Create a new own edge type for reverse direction.
-				EdgeType<String, DefaultWeightedEdge> e2 = new EdgeType<String, DefaultWeightedEdge>(
-						i, j, 0.0, null);
-				e1.setReversed(e2);
-				e2.setReversed(e1);
+				if (e1.getReversed() == null)
+				{
+					// Create a new own edge type for reverse direction.
+					EdgeType<String, DefaultWeightedEdge> e2 = new EdgeType<String, DefaultWeightedEdge>(
+							i, j, 0.0, null);
 
-				// Add edges to outgoing arcs.
+					e1.setReversed(e2);
+					e2.setReversed(e1);
+
+					// Add edge to List of outgoingEdges
+					nodes.get(j).addOutgoingEdge(e2);
+				}
+
+				// Add edge to List of outgoingEdges
 				nodes.get(i).addOutgoingEdge(e1);
-				nodes.get(j).addOutgoingEdge(e2);
 			}
 			if (vertex.equals(source))
 			{
 				nodes.get(i).mark(null, Double.POSITIVE_INFINITY);
-				markedNodes.offer(nodes.get(i));
+				markedNodes.add(nodes.get(i));
 			}
 		}
 	}
@@ -104,9 +104,11 @@ public class FundF
 	// 2
 	private void inspectAndMark()
 	{
+		Random rand = new Random();
 		while (!markedNodes.isEmpty())
 		{
-			NodeType<String, DefaultWeightedEdge> node = markedNodes.poll();
+			int r = rand.nextInt(markedNodes.size());
+			NodeType<String, DefaultWeightedEdge> node = markedNodes.remove(r);
 			node.setVisited(true);
 			for (EdgeType<String, DefaultWeightedEdge> e : node
 					.getOutgoingEdges())
@@ -121,7 +123,7 @@ public class FundF
 							e,
 							Math.min(node.getFlowAmount(),
 									(e.getCapacity() - e.getFlow())));
-					markedNodes.offer(neighbour);
+					markedNodes.add(neighbour);
 				}
 			}
 			if (markedNodes.contains(nodes.get(sinkID)))
@@ -157,7 +159,7 @@ public class FundF
 		}
 
 		markedNodes.clear();
-		markedNodes.offer(nodes.get(sourceID));
+		markedNodes.push(nodes.get(sourceID));
 
 		for (int i = 0; i < nodes.size(); i++)
 		{
@@ -170,16 +172,34 @@ public class FundF
 	{
 		for (NodeType<String, DefaultWeightedEdge> n : nodes)
 		{
+			String vertex = n.getPrototype();
 			for (EdgeType<String, DefaultWeightedEdge> e : n.getOutgoingEdges())
 			{
 				e.getReversed().setFlow(0.0);
-				if (n.isVisited() && !(nodes.get(e.getTail()).isVisited()))
+				double flow = e.getFlow();
+				NodeType<String, DefaultWeightedEdge> lastNode = nodes.get(e.getTail());
+				if (n.isVisited() && !(lastNode.isVisited()))
 				{
-					maxFlow += e.getFlow();
+					maxFlow += flow;
+					System.out.println("+" + flow + " : "
+							+ vertex + "-"
+							+ lastNode.getPrototype());
 				} else if (!(n.isVisited())
-						&& nodes.get(e.getTail()).isVisited())
+						&& lastNode.isVisited())
 				{
-					maxFlow -= e.getFlow();
+					maxFlow -= flow;
+					if (flow < 0)
+					{
+						flow *= -1;
+						System.out.println("+" + flow + " : "
+								+ vertex + "-"
+								+ lastNode.getPrototype());
+					} else
+					{
+						System.out.println("-" + flow + " : "
+								+ vertex + "-"
+								+ lastNode.getPrototype());
+					}
 				}
 			}
 
@@ -189,6 +209,7 @@ public class FundF
 
 	public void getMaxFlow()
 	{
+		System.out.println("");
 		System.out.println("maximaler Fluss: " + maxFlow);
 	}
 }
