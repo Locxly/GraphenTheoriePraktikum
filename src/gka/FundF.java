@@ -213,5 +213,6 @@ public class FundF
 	{
 		System.out.println("");
 		System.out.println("maximaler Fluss: " + maxFlow);
+		System.out.println("Steps: "+steps);
 	}
 }
