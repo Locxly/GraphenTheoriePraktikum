@@ -1,28 +1,49 @@
 package gka;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-// class used for internal representation of network
-class NodeType<V, E>
-{
-    /**
-	 * 
-	 */
-	private V prototype; // corresponding node in the original network
-    private List<EdgeType> outgoingEdges = new ArrayList<EdgeType>(); // list of outgoing arcs
-                                                   // in the residual
-                                                   // network
-    private boolean visited; // this mark is used during BFS to mark visited nodes
-    private EdgeType lastEdge; // last arc in the shortest path
-    private double flowAmount; // amount of flow, we are able to push here
+/**
+ * This class represents a node. We decided to build a new class for nodes
+ * because this way we can mark the node as visited and add the outgoing edges
+ * of a node.
+ * 
+ * @author hoelschers, dreierm
+ * 
+ * @param <V>
+ *            Type of vertex
+ * @param <E>
+ *            Type of edge
+ */
+class NodeType<V, E> {
+    
+	/** The vertex from the original graph. */
+	private V prototype;
+	
+    /** The list of all outgoing edges from this node. */
+    private List<EdgeType> outgoingEdges = new ArrayList<EdgeType>(); 
+    
+    /** The flag if the node is visited or not. */
+    private boolean visited; 
+    
+	/** The last edge from which the node will be reached on shortest path. */
+    private EdgeType lastEdge; 
 
-    NodeType(V prototype) {
+    /** The amount of flow we are able to push through this node. */
+    private double flowAmount;
+    
+    /**
+     * The constructor.
+     * 
+     * @param prototype
+     */
+    public NodeType(V prototype) {
 		this.prototype = prototype;
     }
 
-	public boolean isVisited() {
+    /** Getter and setter. */
+	
+    public boolean isVisited() {
 		return visited;
 	}
 

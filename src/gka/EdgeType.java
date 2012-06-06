@@ -50,6 +50,8 @@ public class EdgeType<V, E> {
 		this.prototype = prototype;
 	}
 
+	 /** Getter and setter. */
+	
 	public EdgeType<V, E> getReversed() {
 		return reversed;
 	}
