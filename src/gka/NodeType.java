@@ -53,4 +53,14 @@ class NodeType<V, E>
 	public EdgeType getLastEdge() {
 		return lastEdge;
 	}
+	
+	public void addOutgoingEdge(EdgeType e){
+		outgoingEdges.add(e);
+	}
+	
+	public void mark(EdgeType last, double posFlow)
+	{
+		lastEdge = last;
+		flowAmount = posFlow;
+	}
 }
