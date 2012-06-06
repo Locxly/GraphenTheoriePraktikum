@@ -14,7 +14,7 @@ import org.jgrapht.*;
  * @author hoelschers
  * 
  */
-public final class EdmondsKarpFlowAlgorithm<V, E> {
+public class EdmondsKarpFlowAlgorithm<V, E> {
 
 	/** The net work. */
 	private DirectedGraph<V, E> graph; // our network
