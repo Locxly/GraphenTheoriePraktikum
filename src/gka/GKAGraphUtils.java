@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -27,7 +28,7 @@ import org.jgrapht.graph.WeightedMultigraph;
  */
 public class GKAGraphUtils {
 
-	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_03.graph";
+	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_08b.graph";
 	// public static final String DEFAULT_GRAPH_FILE_LOCATION =
 	// "/Users/milena/Desktop/GKA/graph_01.graph";
 

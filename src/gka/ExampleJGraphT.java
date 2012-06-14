@@ -81,11 +81,17 @@ public class ExampleJGraphT {
 				startVertex = GKAGraphUtils.setOfVertex.get((int) Math
 						.round(Math.random()
 								* (GKAGraphUtils.setOfVertex.size() - 1)));
+				if (GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION.contains("graph_08b")) {
+					startVertex = "Rostock";
+				}
 			}
 			if (destinationVertex == null) {
 				destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math
 						.round(Math.random()
 								* (GKAGraphUtils.setOfVertex.size() - 1)));
+				if (GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION.contains("graph_08b")) {
+					destinationVertex = "Muenchen";
+				}
 			}
 			System.out.println("Search the way between [" + startVertex
 					+ "] and [" + destinationVertex + "].");
@@ -112,6 +118,9 @@ public class ExampleJGraphT {
 
 			// // Now using the dijkstra algorithm.
 			//DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
+			
+			// Now using ford and fulkerson algorithm
+			FundF fufA = new FundF((DirectedGraph<String, DefaultWeightedEdge>) createdGraph, startVertex, destinationVertex);
 			
 			// Now using edmonds karp algorithm
 			EdmondsKarpAlgorithm<String, DefaultWeightedEdge> ekA = new EdmondsKarpAlgorithm<String, DefaultWeightedEdge>(createdGraph, GKAGraphUtils.setOfVertex);

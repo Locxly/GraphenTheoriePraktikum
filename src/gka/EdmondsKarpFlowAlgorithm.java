@@ -274,9 +274,7 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 	}
 
 	/**
-	 * Returns maximum flow value, that was calculated during last <tt>
-	 * calculateMaximumFlow</tt> call, or <tt>null</tt>, if there was no <tt>
-	 * calculateMaximumFlow</tt> calls.
+	 * Returns maximum flow value.
 	 * 
 	 * @return maximum flow value
 	 */
@@ -285,17 +283,12 @@ public class EdmondsKarpFlowAlgorithm<V, E> {
 	}
 
 	/**
-	 * Returns maximum flow, that was calculated during last <tt>
-	 * calculateMaximumFlow</tt> call, or <tt>null</tt>, if there was no <tt>
-	 * calculateMaximumFlow</tt> calls.
+	 * Returns maximum flow map..
 	 * 
-	 * @return mapping from edges to doubles - flow values
+	 * @return mapping from edges to doubles
 	 */
 	public Map<E, Double> getMaximumFlow() {
-		if (maximumFlow == null) {
-			return null;
-		}
-		return Collections.unmodifiableMap(maximumFlow);
+		return maximumFlow;
 	}
 
 }
