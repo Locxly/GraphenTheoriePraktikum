@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -27,9 +28,9 @@ import org.jgrapht.graph.WeightedMultigraph;
  */
 public class GKAGraphUtils {
 
-	//public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_04.graph";
-	 public static final String DEFAULT_GRAPH_FILE_LOCATION =
-	 "/Users/milena/HAW/BAI3/GKA/Aufg4/etc/graph_10.graph";
+	public static final String DEFAULT_GRAPH_FILE_LOCATION = "/Users/hoelschers/Documents/workspace/GraphenTheoriePraktikum/etc/graph_08b.graph";
+	// public static final String DEFAULT_GRAPH_FILE_LOCATION =
+	// "/Users/milena/Desktop/GKA/graph_01.graph";
 
 	// Constants
 	// Type of undirected graph
@@ -140,26 +141,27 @@ public class GKAGraphUtils {
 		// Now we add the edge to the graph.
 		for (BaseSourceEdge item : baseSourceList) {
 			// If possible we try add the from vertex.
-			//System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexFrom()) + "].");
+			System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexFrom()) + "].");
 			if (!graph.containsVertex(item.getVertexFrom())) {
-				//System.out.println("Add vertex [" + item.getVertexFrom() + "].");
+				System.out
+						.println("Add vertex [" + item.getVertexFrom() + "].");
 				graph.addVertex(item.getVertexFrom());
 				GKAGraphUtils.setOfVertex.add(item.getVertexFrom());
 			}
 			// If possible we try add the to_vertex.
-			//System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexTo()) + "].");
+			System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexTo()) + "].");
 			if (!graph.containsVertex(item.getVertexTo())) {
-				//System.out.println("Add vertex [" + item.getVertexTo() + "].");
+				System.out.println("Add vertex [" + item.getVertexTo() + "].");
 				graph.addVertex(item.getVertexTo());
 				GKAGraphUtils.setOfVertex.add(item.getVertexTo());
 			}
 			// Let's check if the edge is already there. If not we will add the
 			// edge.
 			if (!graph.containsEdge(item.getVertexFrom(), item.getVertexTo())) {
-				/*System.out.println("Add edge from vertex ["
+				System.out.println("Add edge from vertex ["
 						+ item.getVertexFrom() + "] to vertex ["
 						+ item.getVertexTo() + "] with weigth ["
-						+ item.getEdgeWeight().doubleValue() + "]");*/
+						+ item.getEdgeWeight().doubleValue() + "]");
 				Graphs.addEdge(graph, item.getVertexFrom(), item.getVertexTo(),
 						item.getEdgeWeight().doubleValue());
 			}
@@ -185,7 +187,7 @@ public class GKAGraphUtils {
 		// Now we add the edge to the graph.
 		for (BaseSourceEdge item : baseSourceList) {
 			// If possible we try add the from_vertex.
-			//System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexFrom()) + "].");
+			System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexFrom()) + "].");
 			if (!graph.containsVertex(item.getVertexFrom())) {
 				System.out
 						.println("Add vertex [" + item.getVertexFrom() + "].");
@@ -193,7 +195,7 @@ public class GKAGraphUtils {
 				GKAGraphUtils.setOfVertex.add(item.getVertexFrom());
 			}
 			// If possible we try add the to_vertex.
-			//System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexTo()) + "].");
+			System.out.println("Graph already contains vertex [" + graph.containsVertex(item.getVertexTo()) + "].");
 			if (!graph.containsVertex(item.getVertexTo())) {
 				System.out.println("Add vertex [" + item.getVertexTo() + "].");
 				graph.addVertex(item.getVertexTo());

@@ -14,7 +14,6 @@ public class BaseSourceEdge {
 	private String vertexFrom;
 	private String vertexTo;
 	private Long edgeWeight;
-	
 	/**
 	 * @return the vertexFrom
 	 */

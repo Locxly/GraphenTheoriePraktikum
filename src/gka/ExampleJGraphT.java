@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,25 +78,23 @@ public class ExampleJGraphT {
 			// Now we try to find start and destination vertex if vertex are
 			// empty.
 			if (startVertex == null) {
-				//startVertex = GKAGraphUtils.setOfVertex.get((int) Math
-					//	.round(Math.random()
-						//		* (GKAGraphUtils.setOfVertex.size() - 1)));
-				//startVertex = "s"; //graph_06
-				//startVertex = "1"; //graph_07
-				//startVertex = "Rostock"; //graph_08
-				startVertex = "v1"; //graph_10
+				startVertex = GKAGraphUtils.setOfVertex.get((int) Math
+						.round(Math.random()
+								* (GKAGraphUtils.setOfVertex.size() - 1)));
+				if (GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION.contains("graph_08b")) {
+					startVertex = "Rostock";
+				}
 			}
 			if (destinationVertex == null) {
-				//destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math
-					//	.round(Math.random()
-						//		* (GKAGraphUtils.setOfVertex.size() - 1)));
-				//destinationVertex = "y"; //graph_06
-				//destinationVertex = "9"; //graph_07
-				//destinationVertex = "MŸnchen"; //graph_08
-				
+				destinationVertex = GKAGraphUtils.setOfVertex.get((int) Math
+						.round(Math.random()
+								* (GKAGraphUtils.setOfVertex.size() - 1)));
+				if (GKAGraphUtils.DEFAULT_GRAPH_FILE_LOCATION.contains("graph_08b")) {
+					destinationVertex = "Muenchen";
+				}
 			}
-			//System.out.println("Search the way between [" + startVertex
-					//+ "] and [" + destinationVertex + "].");
+			System.out.println("Search the way between [" + startVertex
+					+ "] and [" + destinationVertex + "].");
 
 			// // First via depth first search.
 			// try {
@@ -107,25 +106,26 @@ public class ExampleJGraphT {
 			//
 			// // Now via breadth first search
 			// try {
-			// breadthFirstSearchForVertex(createdGraph, startVertex,
-			// destinationVertex);
+			//breadthFirstSearchForVertex(createdGraph, startVertex,
+			//		destinationVertex);
 			// } catch (Exception e) {
 			// System.err.println("Finalize breadth first search after exception.");
 			// }
 			//
 			// Now using the floyd warshall algorithm.
-//			FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(
-//					createdGraph);
-//			algorithmFW.calculate(startVertex, destinationVertex);
+			//FlyodWarshallAlgorithm algorithmFW = new FlyodWarshallAlgorithm(createdGraph);
+			//algorithmFW.calculate(startVertex, destinationVertex);
 
 			// // Now using the dijkstra algorithm.
-			 //DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
+			//DijkstraAlgorithm algorithmD = new	 DijkstraAlgorithm(createdGraph, startVertex);
+			
+			// Now using ford and fulkerson algorithm
+			FundF fufA = new FundF((DirectedGraph<String, DefaultWeightedEdge>) createdGraph, startVertex, destinationVertex);
+			
+			// Now using edmonds karp algorithm
+			EdmondsKarpAlgorithm<String, DefaultWeightedEdge> ekA = new EdmondsKarpAlgorithm<String, DefaultWeightedEdge>(createdGraph, GKAGraphUtils.setOfVertex);
+			ekA.calculate(startVertex, destinationVertex);
 
-			// Now using the ford fulkerson algorithmus
-			if(createdGraph instanceof UndirectedGraph<?, ?>)
-			{
-				Hierholzer hierholz = new Hierholzer((UndirectedGraph<String, DefaultWeightedEdge>)createdGraph, startVertex);
-			}
 		} else {
 			// Could not create graph.
 			throw new RuntimeException("Error. Could not create valid error.");
