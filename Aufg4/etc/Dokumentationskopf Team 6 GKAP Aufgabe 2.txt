@@ -1,0 +1,29 @@
+/**
+ * GKA group 6
+ * 
+ * Dokumentationskopf
+ * ------------------
+ *
+ * Team 6: 			Stephan Hölscher, Milena Dreier
+ *
+ * Aufgabenaufteilung: 		Milena  Implementierung Dijkstra-Algorithmus
+ *                              Stephan Implementierung Floyd-Warshall-Algorithmus
+ *                              Integration in bestehende Software durch beide unter Verwendung von GitHub
+ *
+ * Quellenangaben: 		http://jgrapht.org/javadoc/
+ *                              http://jgrapht.org/javadoc/org/jgrapht/alg/FloydWarshallShortestPaths.html
+ * 				Christoph Klauck, Christoph Mass: Graphentheorie für Studierende der Informatik, 4. Auflage.
+ *                              Quellcode jGraphT Implementierung Floyd-Warshall (https://www.java2s.com/Open-Source/Java/Science/jgrapht-0.8.1/org/jgrapht/alg/FloydWarshallShortestPaths.java.htm)
+ *                              englischer Wikipedia-Eintrag Floyd-Warshall-Alg. (http://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
+ *                              deutscher Wikipedia-Eintrag Floyd-Warshall-Alg. (http://de.wikipedia.org/wiki/Algorithmus_von_Floyd_und_Warshall#Beschreibung)
+ * 
+ * Bearbeitungszeitraum: 	Start am 01.05.2012, Fertigstellung am 09.05.2012
+ * 				tägliche Bearbeitung von 1-3 Stunden
+ *
+ * Aktueller Stand:		FW-Implementierung mit negativen Kantengewichten fehlt noch.
+ *  				Zugriff-Messung bei FW-Implementierung steht aus.
+ *				eventuell Änderungen am Programmier-Stil und zur Optimierung nötig
+ * 
+ * @author hoelschers, dreierm
+ * 
+ */
